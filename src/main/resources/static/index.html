@@ -21,25 +21,34 @@
     <h1 style="text-align: center; margin-bottom: 20px">Магазин продуктов</h1>
 </header>
 <div class="container" ng-controller="indexController">
-    <div style="display: flex;justify-content: space-around; flex-wrap: wrap">
-        <form class="d-flex" ng-submit="fillTable()"
-              style="margin-bottom: 20px; max-height: 54px; width: 30%; min-width: 200px">
-            <input id="input-field-id" class="form-control me-2" type="number" placeholder="Id товара" aria-label="Search"
-                   ng-model="filter.id">
-            <button class="btn btn-outline-success" type="submit">Найти</button>
-        </form>
-        <div class="accordion" style="margin-bottom: 20px; width: 30%; min-width: 280px" id="accordionExample">
+    <div style="display: flex;justify-content: left; flex-wrap: wrap">
+        <!--        <form class="d-flex" ng-submit="fillTable()"-->
+        <!--              style="margin-bottom: 20px; max-height: 54px; width: 30%; min-width: 200px">-->
+        <!--            <input id="input-field-id" class="form-control me-2" type="number" placeholder="Id товара"-->
+        <!--                   aria-label="Search"-->
+        <!--                   ng-model="filter.id">-->
+        <!--            <button class="btn btn-outline-success" type="submit">Найти</button>-->
+        <!--        </form>-->
+        <div class="accordion filter" style="margin-bottom: 20px; width: 30%; min-width: 280px" id="filter">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <button class="accordion-button collapsed filter" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filterBody" aria-expanded="false" aria-controls="collapseTwo">
                         Фильтр
                     </button>
                 </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                     data-bs-parent="#accordionExample">
+                <div id="filterBody" class="accordion-collapse collapse filter" aria-labelledby="headingTwo"
+                     data-bs-parent="#filter">
                     <div class="accordion-body">
                         <form ng-submit="fillTable()">
+                            <div class="row mb-3">
+                                <label for="title" class="col-sm-2 col-form-label" style="width: 100%">Название
+                                    продукта</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" ng-model="filter.title" id="title"
+                                           placeholder="Название">
+                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <label for="min-price" class="col-sm-2 col-form-label" style="width: 100%">Минимальная
                                     цена</label>
@@ -87,8 +96,18 @@
     <div style="display: flex; justify-content: space-around ">
         <nav aria-label="Page navigation example" ng-model="filter.numb">
             <ul class="pagination" style="margin: 0px">
-                <li data-ng-repeat="index in PageCount" class="page-item">
-                    <a class="page-link" href="#" ng-click="changePage(index)">{{index}}</a>
+
+                <li ng-class="ProductsPage.first ? 'page-item disabled' : 'page-item'">
+                    <a class="page-link" ng-click="fillTable(ProductsPage.number)"><</a>
+                </li>
+
+                <li data-ng-repeat="index in PageArray"
+                    ng-class="ProductsPage.number == index-1 ? 'page-item active' : 'page-item'">
+                    <a class="page-link" ng-click="fillTable(index)">{{index}}</a>
+                </li>
+
+                <li ng-class="ProductsPage.last ? 'page-item disabled' : 'page-item'">
+                    <a class="page-link" ng-click="fillTable(ProductsPage.number + 2)">></a>
                 </li>
             </ul>
         </nav>
@@ -103,17 +122,17 @@
         </div>
     </div>
     <hr>
-    <div class="accordion accordion-flush" id="accordionFlushExample">
+    <div class="accordion accordion-flush creator" id="creator">
         <div class="accordion-item">
             <h2 class="accordion-header" id="flush-headingOne">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne"
+                        data-bs-target="#creatorBody" aria-expanded="false" aria-controls="flush-collapseOne"
                         style="font-size: 36px">
                     Создать новый товар
                 </button>
             </h2>
-            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-                 data-bs-parent="#accordionFlushExample">
+            <div id="creatorBody" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                 data-bs-parent="#creator">
                 <div class="accordion-body">
                     <form class="row" ng-submit="createNewProduct()">
                         <div class="col">

@@ -1,29 +1,33 @@
 angular.module('app', []).controller('indexController', function ($scope, $http) {
     const contextPath = 'http://localhost:8189/app/api/v1/products';
 
-    $scope.fillTable = function () {
-        $scope.filter && $scope.filter.id != null ? $scope.findProductById() : $scope.findAllProducts();
+    $scope.fillTable = function (pageIndex) {
+        $scope.filter && $scope.filter.id != null ? $scope.findProductById() : $scope.findAllProducts(pageIndex);
     }
 
-    $scope.findAllProducts = function () {
+    $scope.findAllProducts = function (pageIndex) {
         $http({
             url: contextPath,
             method: 'GET',
             params: {
                 min: $scope.filter ? $scope.filter.min : null,
                 max: $scope.filter ? $scope.filter.max : null,
+                title: $scope.filter ? $scope.filter.title : null,
                 size: $scope.filter ? $scope.filter.size : 10,
-                numb: $scope.pageIndex
+                numb: pageIndex
             },
         }).then(function (response) {
             $scope.ProductsPage = response.data;
             $scope.ProductsList = $scope.ProductsPage.content;
-            console.log($scope.ProductsList)
-            if ($scope.ProductsPage.empty && $scope.pageIndex !== 1) {
-                $scope.pageIndex = $scope.pageIndex - 1;
-                $scope.fillTable();
+            console.log($scope.ProductsPage)
+            if ($scope.ProductsPage.empty && pageIndex !== 1) {
+                $scope.fillTable(pageIndex--);
             }
-            $scope.pageCount = $scope.createPagesArray($scope.ProductsPage.totalPages);
+            let minPageIndex = pageIndex - 2;
+            let maxPageIndex = pageIndex + 2;
+            if (minPageIndex < 1) minPageIndex = 1;
+            if (maxPageIndex > $scope.ProductsPage.totalPages) maxPageIndex = $scope.ProductsPage.totalPages;
+            $scope.pageCount = $scope.createPagesArray(minPageIndex, maxPageIndex);
         });
     }
 
@@ -32,17 +36,25 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             .then(function (response) {
                 $scope.ProductsList = [response.data];
                 console.log($scope.ProductsList)
-                $scope.pageCount = $scope.createPagesArray($scope.ProductsList.length);
+                $scope.PageArray = [1];
             });
     };
 
-    $scope.createPagesArray = function (size) {
-        if (size == null) size = 1;
+    // $scope.createPagesArray = function (size) {
+    //     if (size == null) size = 1;
+    //     let array = [];
+    //     for (let i = 0; i <= size; i++) {
+    //         array.push(i);
+    //     }
+    //     $scope.PageCount = array;
+    // };
+
+    $scope.createPagesArray = function (start, end) {
         let array = [];
-        for (let i = 0; i < size; i++) {
-            array.push(i + 1);
+        for (let i = start; i <= end; i++) {
+            array.push(i);
         }
-        $scope.PageCount = array;
+        $scope.PageArray = array;
     };
 
     $scope.createNewProduct = function () {
@@ -70,12 +82,8 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
         }
     };
 
-    $scope.changePage = function (index) {
-        $scope.pageIndex = index;
-        $scope.fillTable();
-    }
-
     $scope.cleanFilter = function () {
+        $scope.filter ? $scope.filter.title = null : null;
         $scope.filter ? $scope.filter.min = null : null;
         $scope.filter ? $scope.filter.max = null : null;
         $scope.fillTable();
