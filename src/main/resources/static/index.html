@@ -21,7 +21,7 @@
     <h1 style="text-align: center; margin-bottom: 20px">Магазин продуктов</h1>
 </header>
 <div class="container" ng-controller="indexController">
-    <div style="display: flex;justify-content: left; flex-wrap: wrap">
+    <div style="display: flex;justify-content: space-between; flex-wrap: wrap">
         <!--        <form class="d-flex" ng-submit="fillTable()"-->
         <!--              style="margin-bottom: 20px; max-height: 54px; width: 30%; min-width: 200px">-->
         <!--            <input id="input-field-id" class="form-control me-2" type="number" placeholder="Id товара"-->
@@ -74,6 +74,32 @@
                 </div>
             </div>
         </div>
+        <div class="card" style="width: 30%; min-width: 280px">
+            <div class="card-body">
+                <h3 class="card-title" style="text-align: center">Корзина</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Товар</th>
+                        <th scope="col">Кол.</th>
+                        <th scope="col">Стоимость</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="pc in CartList">
+                        <th>{{pc.product.title}}</th>
+                        <td>{{pc.count}}</td>
+                        <td>{{pc.product.cost*pc.count}}</td>
+                        <td>
+                            <button type="button" class="btn-close" aria-label="Close"
+                                    style="width: 5px;height: 5px" ng-click="deleteProductByCart(pc.id)"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <table class="table table-striped">
         <thead>
@@ -88,6 +114,10 @@
             <th scope="row">{{p.title}}</th>
             <td>{{p.cost}}</td>
             <td>
+                <button type="button" style="margin-right: 10px" class="btn btn-success"
+                        ng-click="addProductInCart(p.id)">
+                    Добавить
+                </button>
                 <button class="btn btn-danger" ng-click="deleteProductById(p.id)">Удалить</button>
             </td>
         </tr>

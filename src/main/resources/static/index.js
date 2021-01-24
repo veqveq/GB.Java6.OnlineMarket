@@ -1,13 +1,13 @@
 angular.module('app', []).controller('indexController', function ($scope, $http) {
-    const contextPath = 'http://localhost:8189/app/api/v1/products';
+    const contextPath = 'http://localhost:8189/app/api/v1';
 
     $scope.fillTable = function (pageIndex) {
         $scope.filter && $scope.filter.id != null ? $scope.findProductById() : $scope.findAllProducts(pageIndex);
     }
 
-    $scope.findAllProducts = function (pageIndex) {
+    $scope.findAllProducts = function (pageIndex = 1) {
         $http({
-            url: contextPath,
+            url: contextPath + '/products',
             method: 'GET',
             params: {
                 min: $scope.filter ? $scope.filter.min : null,
@@ -32,22 +32,13 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     }
 
     $scope.findProductById = function () {
-        $http.get(contextPath + '/' + $scope.filter.id)
+        $http.get(contextPath + '/products/' + $scope.filter.id)
             .then(function (response) {
                 $scope.ProductsList = [response.data];
                 console.log($scope.ProductsList)
                 $scope.PageArray = [1];
             });
     };
-
-    // $scope.createPagesArray = function (size) {
-    //     if (size == null) size = 1;
-    //     let array = [];
-    //     for (let i = 0; i <= size; i++) {
-    //         array.push(i);
-    //     }
-    //     $scope.PageCount = array;
-    // };
 
     $scope.createPagesArray = function (start, end) {
         let array = [];
@@ -58,7 +49,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.createNewProduct = function () {
-        $http.post(contextPath, $scope.NewProduct)
+        $http.post(contextPath + '/products', $scope.NewProduct)
             .then(function (response) {
                 $scope.NewProduct = null;
                 $scope.fillTable();
@@ -66,11 +57,34 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.deleteProductById = function (id) {
-        $http.delete(contextPath + '/' + id)
+        $http.delete(contextPath + '/products/' + id)
             .then(function (response) {
                 $scope.fillTable();
             });
     };
+
+    $scope.addProductInCart = function (id) {
+        $http.get(contextPath + '/cart/add/' + id)
+            .then(function (response) {
+                $scope.fillCart();
+            })
+    }
+
+    $scope.fillCart = function () {
+        $http.get(contextPath + '/cart/')
+            .then(function (response) {
+                console.log(response.data)
+                $scope.CartList = response.data;
+            })
+    }
+
+    $scope.deleteProductByCart = function (id) {
+        $http.get(contextPath + '/cart/delete/' + id)
+            .then(function (response) {
+                $scope.fillCart();
+            });
+    }
+
 
     $scope.changePagination = function () {
         let selectElement = document.getElementById("pagination").options.selectedIndex;
@@ -90,5 +104,6 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.findAllProducts();
+    $scope.fillCart();
 })
 ;
