@@ -40,4 +40,9 @@ public class CartController {
             }
         }
     }
+
+    @GetMapping("/clean")
+    private void clean() {
+        cartService.clean();
+    }
 }

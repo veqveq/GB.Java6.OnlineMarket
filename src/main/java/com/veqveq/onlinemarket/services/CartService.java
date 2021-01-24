@@ -41,4 +41,8 @@ public class CartService {
         cartRepository.save(order);
     }
 
+    public void clean(){
+        cartRepository.deleteAll();
+    }
+
 }

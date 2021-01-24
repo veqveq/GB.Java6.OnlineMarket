@@ -75,6 +75,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             .then(function (response) {
                 console.log(response.data)
                 $scope.CartList = response.data;
+                $scope.cartCalculation();
             })
     }
 
@@ -83,6 +84,20 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             .then(function (response) {
                 $scope.fillCart();
             });
+    }
+
+    $scope.cartCalculation = function () {
+        $scope.CartSum = 0;
+        for (let i = 0; i < $scope.CartList.length; i++) {
+            $scope.CartSum = $scope.CartSum + $scope.CartList[i].product.cost * $scope.CartList[i].count;
+        }
+    }
+
+    $scope.cleanCart = function (){
+        $http.get(contextPath + '/cart/clean')
+            .then(function (response) {
+                $scope.fillCart();
+            })
     }
 
 
