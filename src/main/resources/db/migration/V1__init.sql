@@ -10,11 +10,12 @@ create table products_tbl
 
 create table orders_tbl
 (
-    id_fld         bigint   not null auto_increment,
-    product_id_fld bigint   not null,
-    count_fld      int      not null,
-    created_at_fld datetime not null,
-    updated_at_fld datetime not null,
+    id_fld               bigint   not null auto_increment,
+    product_id_fld       bigint   not null,
+    count_fld            int      not null,
+    cost_per_product_fld int      not null,
+    created_at_fld       datetime not null,
+    updated_at_fld       datetime not null,
     primary key (id_fld),
     foreign key (product_id_fld) references products_tbl (id_fld)
 );

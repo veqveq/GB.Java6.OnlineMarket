@@ -2,7 +2,6 @@ package com.veqveq.onlinemarket.controllers;
 
 import com.veqveq.onlinemarket.dto.ProductDto;
 import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
-import com.veqveq.onlinemarket.models.Product;
 import com.veqveq.onlinemarket.services.ProductService;
 import com.veqveq.onlinemarket.specifications.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -21,7 +18,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     private ProductDto findById(@PathVariable long id) {
-        return productService.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Resource by id: %d not found", id)));
+        return productService.findDtoById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Resource by id: %d not found", id)));
     }
 
     @GetMapping

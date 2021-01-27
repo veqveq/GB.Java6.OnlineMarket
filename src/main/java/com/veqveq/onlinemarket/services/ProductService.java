@@ -5,13 +5,11 @@ import com.veqveq.onlinemarket.models.Product;
 import com.veqveq.onlinemarket.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +25,11 @@ public class ProductService {
         productRepository.save(new Product(product));
     }
 
-    public Optional<ProductDto> findById(Long id) {
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
+
+    public Optional<ProductDto> findDtoById(Long id) {
         return productRepository.findById(id).map(ProductDto::new);
     }
 
@@ -36,7 +38,7 @@ public class ProductService {
     }
 
     public void update(ProductDto product) {
-        if (findById(product.getId()).isPresent()) {
+        if (findDtoById(product.getId()).isPresent()) {
             Product currentProduct = productRepository.findById(product.getId()).get();
             if (product.getCost() != 0) {
                 currentProduct.setCost(product.getCost());
