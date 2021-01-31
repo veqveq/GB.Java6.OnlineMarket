@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class CartDto {
-    private List<OrderDto> orders;
+    private List<OrderItemDto> orders;
     private int totalPrice;
 
     public CartDto(Cart cart) {
-        this.orders = cart.getOrders().stream().map(OrderDto::new).collect(Collectors.toList());
+        this.orders = cart.getOrders().stream().map(OrderItemDto::new).collect(Collectors.toList());
         this.totalPrice = cart.getTotalPrice();
     }
 }

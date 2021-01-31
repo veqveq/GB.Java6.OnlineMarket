@@ -1,7 +1,7 @@
 package com.veqveq.onlinemarket.beans;
 
 import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
-import com.veqveq.onlinemarket.models.Order;
+import com.veqveq.onlinemarket.models.OrderItem;
 import com.veqveq.onlinemarket.models.Product;
 import com.veqveq.onlinemarket.services.ProductService;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 public class Cart {
     private final ProductService productService;
-    private List<Order> orders;
+    private List<OrderItem> orders;
     private int totalPrice;
 
     @PostConstruct
@@ -26,7 +26,7 @@ public class Cart {
     }
 
     public void addProduct(Long id) {
-        for (Order o : orders) {
+        for (OrderItem o : orders) {
             if (o.getProduct().getId().equals(id)) {
                 o.incCount();
                 return;
@@ -34,7 +34,7 @@ public class Cart {
         }
         Product addedProduct = productService.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("Product by ID: %d not found", id)));
-        orders.add(new Order(addedProduct));
+        orders.add(new OrderItem(addedProduct));
     }
 
     public void clean() {
@@ -42,7 +42,7 @@ public class Cart {
     }
 
     public void decrementProduct(Long id) {
-        for (Order o : orders) {
+        for (OrderItem o : orders) {
             if (o.getProduct().getId().equals(id)) {
                 if (o.getCount() == 1) {
                     orders.remove(o);
@@ -55,7 +55,7 @@ public class Cart {
     }
 
     public void deleteProduct(Long id) {
-        for (Order o : orders) {
+        for (OrderItem o : orders) {
             if (o.getProduct().getId().equals(id)) {
                 orders.remove(o);
                 return;
@@ -66,7 +66,7 @@ public class Cart {
 
     public void calculateTotalPrice() {
         totalPrice = 0;
-        for (Order o : orders) {
+        for (OrderItem o : orders) {
             totalPrice += o.getTotalCost();
         }
     }

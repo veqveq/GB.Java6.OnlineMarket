@@ -1,19 +1,19 @@
 package com.veqveq.onlinemarket.dto;
 
-import com.veqveq.onlinemarket.models.Order;
+import com.veqveq.onlinemarket.models.OrderItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class OrderDto {
+public class OrderItemDto {
     private Long productId;
     private String productTitle;
     private int count;
     private int costPerProduct;
     private int totalCost;
 
-    public OrderDto(Order order) {
+    public OrderItemDto(OrderItem order) {
         this.productId = order.getProduct().getId();
         this.productTitle = order.getProduct().getTitle();
         this.count = order.getCount();
