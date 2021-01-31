@@ -7,13 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class OrderDto {
-    private Long id;
-    private ProductDto product;
+    private Long productId;
+    private String productTitle;
     private int count;
+    private int costPerProduct;
+    private int totalCost;
 
     public OrderDto(Order order) {
-        this.id = order.getId();
-        this.product = new ProductDto(order.getProduct());
+        this.productId = order.getProduct().getId();
+        this.productTitle = order.getProduct().getTitle();
         this.count = order.getCount();
+        this.costPerProduct = order.getCostPerProduct();
+        this.totalCost = order.getTotalCost();
     }
 }

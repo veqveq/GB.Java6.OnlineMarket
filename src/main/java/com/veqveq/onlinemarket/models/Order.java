@@ -24,6 +24,9 @@ public class Order {
     private Product product;
     @Column(name = "count_fld")
     private int count;
+    @Column(name = "cost_per_product_fld")
+    private int costPerProduct;
+    private int totalCost;
     @Column(name = "created_at_fld")
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -34,5 +37,21 @@ public class Order {
     public Order(Product product) {
         this.product = product;
         this.count = 1;
+        this.costPerProduct = product.getCost();
+        calculateTotalCost();
+    }
+
+    public void incCount() {
+        count++;
+        calculateTotalCost();
+    }
+
+    public void decCount() {
+        count--;
+        calculateTotalCost();
+    }
+
+    private void calculateTotalCost() {
+        totalCost = count * costPerProduct;
     }
 }

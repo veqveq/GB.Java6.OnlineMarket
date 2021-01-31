@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="card" style="width: 30%; min-width: 280px;">
+        <div class="card" style="width: 40%; min-width: 280px;">
             <div class="card-body">
                 <h3 class="card-title" style="text-align: center">Корзина</h3>
                 <table class="table">
@@ -80,13 +80,18 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="pc in CartList">
-                        <th>{{pc.product.title}}</th>
-                        <td>{{pc.count}}</td>
-                        <td>{{pc.product.cost}}</td>
-                        <td>{{pc.product.cost*pc.count}}</td>
+                        <th>{{pc.productTitle}}</th>
+                        <td>
+                            <button style="padding: 0;border: 0;background: none;margin-right: 5px" ng-click="addProductInCart(pc.productId)">&#10133</button>
+                            {{pc.count}}
+                            <button style="padding: 0;border: 0;background: none;margin-left: 5px" ng-click="decCountProductInCart(pc.productId)">&#10134</button>
+                        </td>
+                        <td>{{pc.costPerProduct}}</td>
+                        <td>{{pc.count + 'x' + pc.costPerProduct + '=' + pc.totalCost}}</td>
                         <td>
                             <button type="button" class="btn-close" aria-label="Close"
-                                    style="width: 5px;height: 5px" ng-click="deleteProductByCart(pc.id)"></button>
+                                    style="width: 5px;height: 5px"
+                                    ng-click="deleteProductByCart(pc.productId)"></button>
                         </td>
                     </tr>
                     </tbody>

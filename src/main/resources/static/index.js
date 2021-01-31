@@ -74,8 +74,10 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
         $http.get(contextPath + '/cart/')
             .then(function (response) {
                 console.log(response.data)
-                $scope.CartList = response.data;
-                $scope.cartCalculation();
+                $scope.Cart = response.data;
+                $scope.CartList = $scope.Cart.orders;
+                $scope.CartSum = $scope.Cart.totalPrice;
+                // $scope.cartCalculation();
             })
     }
 
@@ -86,14 +88,21 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             });
     }
 
-    $scope.cartCalculation = function () {
-        $scope.CartSum = 0;
-        for (let i = 0; i < $scope.CartList.length; i++) {
-            $scope.CartSum = $scope.CartSum + $scope.CartList[i].product.cost * $scope.CartList[i].count;
-        }
+    $scope.decCountProductInCart = function (id) {
+        $http.get(contextPath + '/cart/dec/' + id)
+            .then(function (response) {
+                $scope.fillCart();
+            });
     }
 
-    $scope.cleanCart = function (){
+    // $scope.cartCalculation = function () {
+    //     $scope.CartSum = 0;
+    //     for (let i = 0; i < $scope.CartList.length; i++) {
+    //         $scope.CartSum = $scope.CartSum + $scope.CartList[i].product.cost * $scope.CartList[i].count;
+    //     }
+    // }
+
+    $scope.cleanCart = function () {
         $http.get(contextPath + '/cart/clean')
             .then(function (response) {
                 $scope.fillCart();
