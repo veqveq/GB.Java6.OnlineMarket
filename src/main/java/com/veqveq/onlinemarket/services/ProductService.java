@@ -5,12 +5,11 @@ import com.veqveq.onlinemarket.models.Product;
 import com.veqveq.onlinemarket.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,18 +20,33 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public void saveOrUpdate(Product product) {
-        productRepository.save(product);
+    public void save(ProductDto product) {
+        product.setId(null);
+        productRepository.save(new Product(product));
     }
 
-    public Optional<ProductDto> findById(Long id) {
-        return productRepository.findById(id).stream().map(ProductDto::new).findFirst();
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
     }
 
-    public Page<ProductDto> findAllByCost(int minPrice, int maxPrice, int page, int size) {
-        Page<Product> originalPage = productRepository.findAllByCostIsBetween(minPrice, maxPrice, PageRequest.of(page - 1, size));
-        return new PageImpl<>(originalPage.getContent().stream().map(ProductDto::new).collect(Collectors.toList()),
-                originalPage.getPageable(),
-                originalPage.getTotalElements());
+    public Optional<ProductDto> findDtoById(Long id) {
+        return productRepository.findById(id).map(ProductDto::new);
+    }
+
+    public Page<ProductDto> findAll(Specification<Product> spec, int page, int size) {
+        return productRepository.findAll(spec, PageRequest.of(page - 1, size)).map(ProductDto::new);
+    }
+
+    public void update(ProductDto product) {
+        if (findDtoById(product.getId()).isPresent()) {
+            Product currentProduct = productRepository.findById(product.getId()).get();
+            if (product.getCost() != 0) {
+                currentProduct.setCost(product.getCost());
+            }
+            if (product.getTitle() != null) {
+                currentProduct.setTitle(product.getTitle());
+            }
+            productRepository.save(currentProduct);
+        }
     }
 }

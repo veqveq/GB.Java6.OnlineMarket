@@ -1,13 +1,14 @@
 package com.veqveq.onlinemarket.controllers;
 
 import com.veqveq.onlinemarket.dto.ProductDto;
-import com.veqveq.onlinemarket.models.Product;
+import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
 import com.veqveq.onlinemarket.services.ProductService;
+import com.veqveq.onlinemarket.specifications.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -16,23 +17,19 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/{id}")
-    private Optional<ProductDto> findById(@PathVariable long id) {
-        return productService.findById(id);
+    private ProductDto findById(@PathVariable long id) {
+        return productService.findDtoById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Resource by id: %d not found", id)));
     }
 
     @GetMapping
-    private Page<ProductDto> findByCost(@RequestParam(name = "numb", defaultValue = "1") Integer number,
-                                        @RequestParam(name = "size", defaultValue = "10") Integer size,
-                                        @RequestParam(name = "min", defaultValue = "0") Integer minPrice,
-                                        @RequestParam(name = "max", required = false) Integer maxPrice
+    private Page<ProductDto> findByCost(@RequestParam MultiValueMap<String, String> params,
+                                        @RequestParam(name = "numb", defaultValue = "1") Integer number,
+                                        @RequestParam(name = "size", defaultValue = "10") Integer size
     ) {
         if (number < 1) {
             number = 1;
         }
-        if (maxPrice == null) {
-            maxPrice = Integer.MAX_VALUE;
-        }
-        return productService.findAllByCost(minPrice, maxPrice, number, size);
+        return productService.findAll(ProductSpecifications.build(params), number, size);
     }
 
     @DeleteMapping("/{id}")
@@ -40,14 +37,15 @@ public class ProductController {
         productService.deleteById(id);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     private void save(@RequestBody ProductDto product) {
-        product.setId(null);
-        productService.saveOrUpdate(new Product(product));
+        productService.save(product);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping
     private void update(@RequestBody ProductDto product) {
-        productService.saveOrUpdate(new Product(product));
+        productService.update(product);
     }
 }

@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "products_tbl")
@@ -24,6 +25,8 @@ public class Product {
     private String title;
     @Column(name = "cost_fld")
     private int cost;
+    @OneToMany(mappedBy = "product")
+    List<Order> orders;
     @Column(name = "created_at_fld", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
