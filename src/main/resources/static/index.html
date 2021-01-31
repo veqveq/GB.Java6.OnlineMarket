@@ -1,0 +1,141 @@
+<!doctype html>
+
+<html ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+<header>
+    <h1 style="text-align: center; margin-bottom: 20px">Магазин продуктов</h1>
+</header>
+<div class="container" ng-controller="indexController">
+    <div style="display: flex;justify-content: space-around; flex-wrap: wrap">
+        <form class="d-flex" ng-submit="fillTable()"
+              style="margin-bottom: 20px; max-height: 54px; width: 30%; min-width: 200px">
+            <input id="input-field-id" class="form-control me-2" type="number" placeholder="Id товара" aria-label="Search"
+                   ng-model="filter.id">
+            <button class="btn btn-outline-success" type="submit">Найти</button>
+        </form>
+        <div class="accordion" style="margin-bottom: 20px; width: 30%; min-width: 280px" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Фильтр
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                     data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <form ng-submit="fillTable()">
+                            <div class="row mb-3">
+                                <label for="min-price" class="col-sm-2 col-form-label" style="width: 100%">Минимальная
+                                    цена</label>
+                                <div class="col-sm-10">
+                                    <input type="number" ng-model="filter.min" class="form-control" id="min-price"
+                                           placeholder="0">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="max-price" class="col-sm-2 col-form-label" style="width: 100%">Максимальная
+                                    цена</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" ng-model="filter.max" id="max-price"
+                                           placeholder="999">
+                                </div>
+                            </div>
+                            <div style="display:flex; justify-content: space-between">
+                                <button type="submit" class="btn btn-success">Применить</button>
+                                <button type="reset" ng-click="cleanFilter()" class="btn btn-danger">Очистить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Наименование</th>
+            <th scope="col">Цена</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="p in ProductsList">
+            <th scope="row">{{p.title}}</th>
+            <td>{{p.cost}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="deleteProductById(p.id)">Удалить</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="display: flex; justify-content: space-around ">
+        <nav aria-label="Page navigation example" ng-model="filter.numb">
+            <ul class="pagination" style="margin: 0px">
+                <li data-ng-repeat="index in PageCount" class="page-item">
+                    <a class="page-link" href="#" ng-click="changePage(index)">{{index}}</a>
+                </li>
+            </ul>
+        </nav>
+        <div style="display: flex; min-width: 200px; vertical-align: center">
+            <h5 style="font-size: 18px; min-inline-size: 140px; margin: 0; align-self: center">Показывать по</h5>
+            <select id="pagination" class="form-select" aria-label="Default select example"
+                    style="max-width: 150px" ng-click="changePagination()" ng-model="filter.size">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne"
+                        style="font-size: 36px">
+                    Создать новый товар
+                </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                 data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">
+                    <form class="row" ng-submit="createNewProduct()">
+                        <div class="col">
+                            <input type="text" class="form-control" id="inputTitle" name="title"
+                                   placeholder="Наименование" ng-model="NewProduct.title">
+                        </div>
+                        <div class="col">
+                            <input type="number" step="any" class="form-control" id="inputCost" name="cost"
+                                   placeholder="Стоимость" ng-model="NewProduct.cost">
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-outline-success">Добавить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <hr>
+    <h4 style="text-align: center">2021. Все права защищены</h4>
+</footer>
+</body>
+</html>
