@@ -18,6 +18,6 @@ public class OrderItemDto {
         this.productTitle = order.getProduct().getTitle();
         this.count = order.getCount();
         this.costPerProduct = order.getCostPerProduct();
-        this.totalCost = order.getTotalCost();
+        this.totalCost = costPerProduct * count;
     }
 }

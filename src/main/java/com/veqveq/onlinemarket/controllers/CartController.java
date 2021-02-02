@@ -2,19 +2,34 @@ package com.veqveq.onlinemarket.controllers;
 
 import com.veqveq.onlinemarket.dto.CartDto;
 import com.veqveq.onlinemarket.beans.Cart;
+import com.veqveq.onlinemarket.models.Order;
+import com.veqveq.onlinemarket.models.User;
+import com.veqveq.onlinemarket.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("api/v1/cart")
 @RequiredArgsConstructor
 public class CartController {
     private final Cart cart;
+    private final UserService userService;
 
     @GetMapping
     private CartDto getCart() {
-        cart.calculateTotalPrice();
         return new CartDto(cart);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    private void makeOrder(Principal principal) {
+        User user = userService.findByUsername(principal.getName()).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("User by name: [%s] not found", principal.getName())));
+        cart.makeOrder(new Order(user));
     }
 
     @GetMapping("/add/{id}")

@@ -15,6 +15,14 @@ public class CartDto {
 
     public CartDto(Cart cart) {
         this.orders = cart.getOrders().stream().map(OrderItemDto::new).collect(Collectors.toList());
-        this.totalPrice = cart.getTotalPrice();
+        this.totalPrice = calculateTotalPrice();
+    }
+
+    private int calculateTotalPrice() {
+        int sum = 0;
+        for (OrderItemDto o : orders) {
+            sum += o.getTotalCost();
+        }
+        return sum;
     }
 }

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
     public final UsersRepository usersRepository;
 
-    private Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return usersRepository.findByUsername(username);
     }
 

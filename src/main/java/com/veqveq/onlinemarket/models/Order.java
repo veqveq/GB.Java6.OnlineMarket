@@ -1,6 +1,9 @@
 package com.veqveq.onlinemarket.models;
 
+import com.veqveq.onlinemarket.beans.Cart;
+import com.veqveq.onlinemarket.dto.CartDto;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,28 +12,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "users_tbl")
+@Table(name = "orders_tbl")
+@NoArgsConstructor
 @Data
-public class User {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_fld")
     private Long id;
-    @Column(name = "username_fld")
-    private String username;
-    @Column(name = "password_fld")
-    private String password;
-    @ManyToMany
-    @JoinTable(name = "users_roles_tbl",
-            joinColumns = @JoinColumn(name = "user_id_fld"),
-            inverseJoinColumns = @JoinColumn(name = "role_id_fld"))
-    private List<Role> roles;
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
-    @CreationTimestamp
+    @ManyToOne
+    @JoinColumn(name = "user_id_fld")
+    private User user;
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems;
     @Column(name = "created_at_fld")
+    @CreationTimestamp
     private LocalDateTime createdAt;
-    @UpdateTimestamp
     @Column(name = "updated_at_fld")
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+
+    public Order(User user) {
+        this.user = user;
+    }
 }

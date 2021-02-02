@@ -1,3 +1,23 @@
+create table users_tbl
+(
+    id_fld         bigint       not null auto_increment,
+    username_fld   varchar(255) not null unique,
+    password_fld   varchar(255) not null,
+    created_at_fld datetime     not null default current_timestamp(),
+    updated_at_fld datetime     not null default current_timestamp(),
+    primary key (id_fld)
+);
+
+create table orders_tbl
+(
+    id_fld            bigint   not null auto_increment,
+    user_id_fld       bigint   not null,
+    created_at_fld    datetime not null default current_timestamp(),
+    updated_at_fld    datetime not null default current_timestamp(),
+    primary key (id_fld),
+    foreign key (user_id_fld) references users_tbl (id_fld)
+);
+
 create table products_tbl
 (
     id_fld         bigint       not null auto_increment,
@@ -8,26 +28,18 @@ create table products_tbl
     primary key (id_fld)
 );
 
-create table orders_tbl
+create table order_items_tbl
 (
     id_fld               bigint   not null auto_increment,
     product_id_fld       bigint   not null,
     count_fld            int      not null,
     cost_per_product_fld int      not null,
+    order_id_fld         bigint default null,
     created_at_fld       datetime not null default current_timestamp(),
     updated_at_fld       datetime not null default current_timestamp(),
     primary key (id_fld),
-    foreign key (product_id_fld) references products_tbl (id_fld)
-);
-
-create table users_tbl
-(
-    id_fld         bigint       not null auto_increment,
-    username_fld   varchar(255) not null unique,
-    password_fld   varchar(255) not null,
-    created_at_fld datetime     not null default current_timestamp(),
-    updated_at_fld datetime     not null default current_timestamp(),
-    primary key (id_fld)
+    foreign key (product_id_fld) references products_tbl (id_fld),
+    foreign key (order_id_fld) references orders_tbl (id_fld)
 );
 
 create table roles_tbl

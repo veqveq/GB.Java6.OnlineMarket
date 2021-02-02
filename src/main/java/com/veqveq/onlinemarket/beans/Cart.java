@@ -1,8 +1,11 @@
 package com.veqveq.onlinemarket.beans;
 
 import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
+import com.veqveq.onlinemarket.models.Order;
 import com.veqveq.onlinemarket.models.OrderItem;
 import com.veqveq.onlinemarket.models.Product;
+import com.veqveq.onlinemarket.repositories.OrderItemRepository;
+import com.veqveq.onlinemarket.repositories.OrderRepository;
 import com.veqveq.onlinemarket.services.ProductService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Data
 public class Cart {
+    private final OrderItemRepository orderItemRepository;
+    private final OrderRepository orderRepository;
     private final ProductService productService;
     private List<OrderItem> orders;
     private int totalPrice;
@@ -64,10 +69,11 @@ public class Cart {
         throw new ResourceNotFoundException(String.format("Product by ID: %d not found", id));
     }
 
-    public void calculateTotalPrice() {
-        totalPrice = 0;
+    public void makeOrder(Order order) {
+        orderRepository.save(order);
         for (OrderItem o : orders) {
-            totalPrice += o.getTotalCost();
+            o.setOrder(order);
+            orderItemRepository.save(o);
         }
     }
 }
