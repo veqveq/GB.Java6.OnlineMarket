@@ -19,7 +19,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<?> handleUserAlreadyRegisteredException(UserAlreadyRegisteredException e) {
         log.error(e.getMessage());
-        MarketError err = new MarketError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
+        MarketError err = new MarketError(HttpStatus.CONFLICT.value(), e.getMessage());
+        return new ResponseEntity<>(err, HttpStatus.CONFLICT);
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,11 +40,10 @@ public class AuthController {
     }
 
     @PostMapping("/reg")
-    public void createNewUser(@RequestBody JwtRequest request) {
-        if (userService.findByUsername(request.getUsername()).isPresent()){
-            throw new UserAlreadyRegisteredException("User by username " + request.getUsername() +  " is already registered");
+    public void createNewUser(@RequestParam String username, @RequestParam String password) {
+        if (userService.findByUsername(username).isPresent()){
+            throw new UserAlreadyRegisteredException("User by username " + username +  " is already registered");
         }
-        request.setPassword(passwordEncoder.encode(request.getPassword()));
-        userService.save(request);
+        userService.save(username,passwordEncoder.encode(password));
     }
 }

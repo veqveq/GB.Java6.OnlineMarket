@@ -33,10 +33,10 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void save(JwtRequest request) {
+    public void save(String username, String password) {
         List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.findById(2L).orElseThrow(() -> new ResourceNotFoundException(String.format("Role by id: %d not found", 2))));
-        usersRepository.save(new User(request.getUsername(),request.getPassword(),roles));
+        usersRepository.save(new User(username,password,roles));
     }
 
     @Override

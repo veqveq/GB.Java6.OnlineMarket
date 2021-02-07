@@ -156,18 +156,26 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.doRegistration = function () {
-        $http.post(rootPath + '/reg', $scope.user)
-            .then(function successCallback(response) {
-                $scope.tryToAuth();
-            }, function errorCallback(response) {
-                if (response.data.status == 400) {
-                    window.alert("Пользователь с ником " + $scope.user.username + " существует")
-                    $scope.user.username = null;
-                    $scope.user.password = null;
-                } else {
-                    window.alert("Ошибка регистрации!");
-                }
-            })
+        $http({
+            url: rootPath + '/reg',
+            method: 'POST',
+            params: {
+                username: $scope.user ? $scope.user.username : null,
+                password: $scope.user ? $scope.user.password : null,
+            },
+        }).then(function successCallback(response) {
+            $scope.tryToAuth();
+        }, function errorCallback(response) {
+            if (response.data.status == 409) {
+                window.alert("Пользователь с ником " + $scope.user.username + " существует")
+            } else if (response.data.status == 400) {
+                window.alert("Ошибка заполнения формы регистрации!")
+            } else {
+                window.alert("Ошибка регистрации!");
+            }
+            $scope.user.username = null;
+            $scope.user.password = null;
+        })
     };
 
     $scope.exchangeUser = function () {
