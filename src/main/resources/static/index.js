@@ -1,13 +1,15 @@
 angular.module('app', []).controller('indexController', function ($scope, $http) {
-    const contextPath = 'http://localhost:8189/app/api/v1';
+    const rootPath = 'http://localhost:8189/app';
+    const apiPath = rootPath + '/api/v1';
+    $scope.authorized = false;
 
     $scope.fillTable = function (pageIndex) {
         $scope.filter && $scope.filter.id != null ? $scope.findProductById() : $scope.findAllProducts(pageIndex);
-    }
+    };
 
     $scope.findAllProducts = function (pageIndex = 1) {
         $http({
-            url: contextPath + '/products',
+            url: apiPath + '/products',
             method: 'GET',
             params: {
                 min: $scope.filter ? $scope.filter.min : null,
@@ -29,10 +31,10 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             if (maxPageIndex > $scope.ProductsPage.totalPages) maxPageIndex = $scope.ProductsPage.totalPages;
             $scope.pageCount = $scope.createPagesArray(minPageIndex, maxPageIndex);
         });
-    }
+    };
 
     $scope.findProductById = function () {
-        $http.get(contextPath + '/products/' + $scope.filter.id)
+        $http.get(apiPath + '/products/' + $scope.filter.id)
             .then(function (response) {
                 $scope.ProductsList = [response.data];
                 console.log($scope.ProductsList)
@@ -49,7 +51,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.createNewProduct = function () {
-        $http.post(contextPath + '/products', $scope.NewProduct)
+        $http.post(apiPath + '/products', $scope.NewProduct)
             .then(function (response) {
                 $scope.NewProduct = null;
                 $scope.fillTable();
@@ -57,58 +59,57 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.deleteProductById = function (id) {
-        $http.delete(contextPath + '/products/' + id)
+        $http.delete(apiPath + '/products/' + id)
             .then(function (response) {
                 $scope.fillTable();
             });
     };
 
     $scope.addProductInCart = function (id) {
-        $http.get(contextPath + '/cart/add/' + id)
+        $http.get(apiPath + '/cart/add/' + id)
             .then(function (response) {
                 $scope.fillCart();
             })
-    }
+    };
 
     $scope.fillCart = function () {
-        $http.get(contextPath + '/cart/')
+        $http.get(apiPath + '/cart/')
             .then(function (response) {
                 console.log(response.data)
                 $scope.Cart = response.data;
                 $scope.CartList = $scope.Cart.orders;
                 $scope.CartSum = $scope.Cart.totalPrice;
-                // $scope.cartCalculation();
             })
-    }
+    };
 
     $scope.deleteProductByCart = function (id) {
-        $http.get(contextPath + '/cart/delete/' + id)
+        $http.get(apiPath + '/cart/delete/' + id)
             .then(function (response) {
                 $scope.fillCart();
             });
-    }
+    };
 
     $scope.decCountProductInCart = function (id) {
-        $http.get(contextPath + '/cart/dec/' + id)
+        $http.get(apiPath + '/cart/dec/' + id)
             .then(function (response) {
                 $scope.fillCart();
             });
-    }
-
-    // $scope.cartCalculation = function () {
-    //     $scope.CartSum = 0;
-    //     for (let i = 0; i < $scope.CartList.length; i++) {
-    //         $scope.CartSum = $scope.CartSum + $scope.CartList[i].product.cost * $scope.CartList[i].count;
-    //     }
-    // }
+    };
 
     $scope.cleanCart = function () {
-        $http.get(contextPath + '/cart/clean')
+        $http.get(apiPath + '/cart/clean')
             .then(function (response) {
                 $scope.fillCart();
             })
-    }
+    };
 
+    $scope.makeOrder = function () {
+        $http.post(apiPath + '/cart', $scope.Cart)
+            .then(function (response) {
+                window.alert("Заказ успешно оформлен!")
+                $scope.cleanCart();
+            })
+    }
 
     $scope.changePagination = function () {
         let selectElement = document.getElementById("pagination").options.selectedIndex;
@@ -127,7 +128,26 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
         $scope.fillTable();
     };
 
+    $scope.tryToAuth = function () {
+        $http.post(rootPath + '/auth', $scope.user)
+            .then(function successCallback(response) {
+                if (response.data.token) {
+                    $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
+                    $scope.user.username = null;
+                    $scope.user.password = null;
+                    $scope.authorized = true;
+                    $scope.authUser = response.data.username;
+                }
+            }, function errorCallback(response) {
+                window.alert("Error");
+            })
+    };
+
+    $scope.exchangeUser = function () {
+        $http.defaults.headers.common.Authorization = null;
+        $scope.authorized = false;
+    };
+
     $scope.findAllProducts();
     $scope.fillCart();
-})
-;
+});

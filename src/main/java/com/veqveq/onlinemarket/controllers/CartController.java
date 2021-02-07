@@ -5,6 +5,7 @@ import com.veqveq.onlinemarket.beans.Cart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("api/v1/cart")
 @RequiredArgsConstructor
@@ -13,7 +14,6 @@ public class CartController {
 
     @GetMapping
     private CartDto getCart() {
-        cart.calculateTotalPrice();
         return new CartDto(cart);
     }
 

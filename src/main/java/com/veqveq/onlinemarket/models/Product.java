@@ -26,7 +26,7 @@ public class Product {
     @Column(name = "cost_fld")
     private int cost;
     @OneToMany(mappedBy = "product")
-    List<Order> orders;
+    List<OrderItem> orders;
     @Column(name = "created_at_fld", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;

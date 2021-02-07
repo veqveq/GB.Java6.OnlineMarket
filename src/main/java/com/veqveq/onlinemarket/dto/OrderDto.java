@@ -2,22 +2,21 @@ package com.veqveq.onlinemarket.dto;
 
 import com.veqveq.onlinemarket.models.Order;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
 public class OrderDto {
-    private Long productId;
-    private String productTitle;
-    private int count;
-    private int costPerProduct;
-    private int totalCost;
+    private Long id;
+    private List<OrderItemDto> orderItems;
+    private int totalPrice;
+    private String createdAt;
 
     public OrderDto(Order order) {
-        this.productId = order.getProduct().getId();
-        this.productTitle = order.getProduct().getTitle();
-        this.count = order.getCount();
-        this.costPerProduct = order.getCostPerProduct();
-        this.totalCost = order.getTotalCost();
+        this.id = order.getId();
+        this.totalPrice = order.getTotalPrice();
+        this.orderItems = order.getOrderItems().stream().map(OrderItemDto::new).collect(Collectors.toList());
+        this.createdAt = order.getCreatedAt().toLocalDate().toString();
     }
 }
