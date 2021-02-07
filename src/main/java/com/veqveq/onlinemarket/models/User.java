@@ -25,7 +25,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id_fld"),
             inverseJoinColumns = @JoinColumn(name = "role_id_fld"))
     private List<Role> roles;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "owner")
     private List<Order> orders;
     @CreationTimestamp
     @Column(name = "created_at_fld")

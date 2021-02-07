@@ -10,12 +10,13 @@ create table users_tbl
 
 create table orders_tbl
 (
-    id_fld            bigint   not null auto_increment,
-    user_id_fld       bigint   not null,
-    created_at_fld    datetime not null default current_timestamp(),
-    updated_at_fld    datetime not null default current_timestamp(),
+    id_fld          bigint   not null auto_increment,
+    owner_id_fld    bigint   not null,
+    total_price_fld int      not null,
+    created_at_fld  datetime not null default current_timestamp(),
+    updated_at_fld  datetime not null default current_timestamp(),
     primary key (id_fld),
-    foreign key (user_id_fld) references users_tbl (id_fld)
+    foreign key (owner_id_fld) references users_tbl (id_fld)
 );
 
 create table products_tbl
@@ -34,7 +35,7 @@ create table order_items_tbl
     product_id_fld       bigint   not null,
     count_fld            int      not null,
     cost_per_product_fld int      not null,
-    order_id_fld         bigint default null,
+    order_id_fld         bigint            default null,
     created_at_fld       datetime not null default current_timestamp(),
     updated_at_fld       datetime not null default current_timestamp(),
     primary key (id_fld),
