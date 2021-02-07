@@ -1,7 +1,5 @@
 package com.veqveq.onlinemarket.services;
 
-import com.veqveq.onlinemarket.dto.JwtRequest;
-import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
 import com.veqveq.onlinemarket.models.Role;
 import com.veqveq.onlinemarket.models.User;
 import com.veqveq.onlinemarket.repositories.RoleRepository;
@@ -15,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +31,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void save(String username, String password) {
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.findById(2L).orElseThrow(() -> new ResourceNotFoundException(String.format("Role by id: %d not found", 2))));
-        usersRepository.save(new User(username,password,roles));
+        usersRepository.save(new User(username, password, roleRepository.findByRole("ROLE_USER")));
     }
 
     @Override
