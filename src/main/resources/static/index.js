@@ -105,12 +105,20 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.makeOrder = function () {
-        $http.post(apiPath + '/orders', $scope.Cart)
-            .then(function (response) {
+        $http({
+            url: apiPath + '/orders',
+            method: 'POST',
+            params:{
+                address: $scope.order ? $scope.order.address : null,
+            },
+        })
+            .then(function successCallback(response) {
                 window.alert("Заказ успешно оформлен!")
                 $scope.fillCart();
                 $scope.getOrdersHistory();
                 document.getElementById("history-bt").click();
+            },function errorCallback(response) {
+                window.alert("Ошибка оформления заказа");
             })
     };
 

@@ -2,7 +2,6 @@ package com.veqveq.onlinemarket.controllers;
 
 import com.veqveq.onlinemarket.dto.OrderDto;
 import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
-import com.veqveq.onlinemarket.models.Order;
 import com.veqveq.onlinemarket.models.User;
 import com.veqveq.onlinemarket.services.OrderService;
 import com.veqveq.onlinemarket.services.UserService;
@@ -22,10 +21,10 @@ public class OrderController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    private void makeOrder(Principal principal) {
+    private void makeOrder(@RequestParam String address, Principal principal) {
         User user = userService.findByUsername(principal.getName()).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("User by name: [%s] not found", principal.getName())));
-        orderService.saveOrder(user);
+        orderService.saveOrder(user, address);
     }
 
     @GetMapping
