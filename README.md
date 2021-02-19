@@ -1,1 +1,2 @@
 GB.JavaSpring.OnlineMarket
+заглушка
