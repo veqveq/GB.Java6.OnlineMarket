@@ -3,6 +3,7 @@ package com.veqveq.onlinemarket.controllers;
 import com.veqveq.onlinemarket.dto.JwtRequest;
 import com.veqveq.onlinemarket.dto.JwtResponse;
 import com.veqveq.onlinemarket.exceptions.MarketError;
+import com.veqveq.onlinemarket.exceptions.UserAlreadyRegisteredException;
 import com.veqveq.onlinemarket.services.UserService;
 import com.veqveq.onlinemarket.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,6 +25,7 @@ public class AuthController {
     private final UserService userService;
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/auth")
     public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest request) {
@@ -33,5 +37,13 @@ public class AuthController {
         UserDetails details = userService.loadUserByUsername(request.getUsername());
         String token = jwtTokenUtils.generateToken(details);
         return ResponseEntity.ok(new JwtResponse(token, request.getUsername()));
+    }
+
+    @PostMapping("/reg")
+    public void createNewUser(@RequestParam String username, @RequestParam String password) {
+        if (userService.findByUsername(username).isPresent()){
+            throw new UserAlreadyRegisteredException("User by username " + username +  " is already registered");
+        }
+        userService.save(username,passwordEncoder.encode(password));
     }
 }

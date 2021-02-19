@@ -69,6 +69,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
         $http.get(apiPath + '/cart/add/' + id)
             .then(function (response) {
                 $scope.fillCart();
+                document.getElementById("basket-bt").click();
             })
     };
 
@@ -104,12 +105,29 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.makeOrder = function () {
-        $http.post(apiPath + '/cart', $scope.Cart)
-            .then(function (response) {
+        $http({
+            url: apiPath + '/orders',
+            method: 'POST',
+            params:{
+                address: $scope.order ? $scope.order.address : null,
+            },
+        })
+            .then(function successCallback(response) {
                 window.alert("Заказ успешно оформлен!")
-                $scope.cleanCart();
+                $scope.fillCart();
+                $scope.getOrdersHistory();
+                document.getElementById("history-bt").click();
+            },function errorCallback(response) {
+                window.alert("Ошибка оформления заказа");
             })
-    }
+    };
+
+    $scope.getOrdersHistory = function () {
+        $http.get(apiPath + '/orders')
+            .then(function (response) {
+                $scope.OrdersHistory = response.data;
+            });
+    };
 
     $scope.changePagination = function () {
         let selectElement = document.getElementById("pagination").options.selectedIndex;
@@ -137,10 +155,35 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
                     $scope.user.password = null;
                     $scope.authorized = true;
                     $scope.authUser = response.data.username;
+                    $scope.fillCart();
+                    $scope.getOrdersHistory();
                 }
             }, function errorCallback(response) {
-                window.alert("Error");
+                window.alert("Ошибка авторизации. Неверный логин/пароль");
             })
+    };
+
+    $scope.doRegistration = function () {
+        $http({
+            url: rootPath + '/reg',
+            method: 'POST',
+            params: {
+                username: $scope.user ? $scope.user.username : null,
+                password: $scope.user ? $scope.user.password : null,
+            },
+        }).then(function successCallback(response) {
+            $scope.tryToAuth();
+        }, function errorCallback(response) {
+            if (response.data.status == 409) {
+                window.alert("Пользователь с ником " + $scope.user.username + " существует")
+            } else if (response.data.status == 400) {
+                window.alert("Ошибка заполнения формы регистрации!")
+            } else {
+                window.alert("Ошибка регистрации!");
+            }
+            $scope.user.username = null;
+            $scope.user.password = null;
+        })
     };
 
     $scope.exchangeUser = function () {
@@ -149,5 +192,5 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     };
 
     $scope.findAllProducts();
-    $scope.fillCart();
+
 });

@@ -2,6 +2,7 @@ package com.veqveq.onlinemarket.services;
 
 import com.veqveq.onlinemarket.models.Role;
 import com.veqveq.onlinemarket.models.User;
+import com.veqveq.onlinemarket.repositories.RoleRepository;
 import com.veqveq.onlinemarket.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,9 +22,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     public final UsersRepository usersRepository;
+    private final RoleRepository roleRepository;
+
 
     public Optional<User> findByUsername(String username) {
         return usersRepository.findByUsername(username);
+    }
+
+    @Transactional
+    public void save(String username, String password) {
+        usersRepository.save(new User(username, password, roleRepository.findByRole("ROLE_USER")));
     }
 
     @Override

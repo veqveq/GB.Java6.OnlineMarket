@@ -17,8 +17,8 @@ public class OrderService {
     private final Cart cart;
     private final OrderRepository orderRepository;
 
-    public void saveOrder(User user) {
-        orderRepository.save(new Order(cart, user));
+    public void saveOrder(User user, String address) {
+        orderRepository.save(new Order(cart, user, address));
         cart.clean();
     }
 
