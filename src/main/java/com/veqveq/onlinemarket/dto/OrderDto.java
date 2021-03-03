@@ -11,12 +11,14 @@ public class OrderDto {
     private Long id;
     private List<OrderItemDto> orderItems;
     private int totalPrice;
+    private String address;
     private String createdAt;
 
     public OrderDto(Order order) {
         this.id = order.getId();
         this.totalPrice = order.getTotalPrice();
         this.orderItems = order.getOrderItems().stream().map(OrderItemDto::new).collect(Collectors.toList());
+        this.address = order.getAddress();
         this.createdAt = order.getCreatedAt().toLocalDate().toString();
     }
 }

@@ -15,4 +15,11 @@ public class ExceptionControllerAdvice {
         MarketError err = new MarketError(HttpStatus.NOT_FOUND.value(), e.getMessage());
         return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleUserAlreadyRegisteredException(UserAlreadyRegisteredException e) {
+        log.error(e.getMessage());
+        MarketError err = new MarketError(HttpStatus.CONFLICT.value(), e.getMessage());
+        return new ResponseEntity<>(err, HttpStatus.CONFLICT);
+    }
 }
