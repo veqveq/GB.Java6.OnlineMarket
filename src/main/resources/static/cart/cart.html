@@ -1,0 +1,46 @@
+
+<div ng-show="getCart().orders.length > 0">
+    <h4>Корзина</h4>
+    <div class="tab-pane fade show active" id="basket-list">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Товар</th>
+                <th scope="col">Кол.</th>
+                <th scope="col">Итого</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="pc in getCart().orders">
+                <th>{{pc.productTitle}}</th>
+                <td>
+                    <button style="padding: 0;border: 0;background: none;margin-right: 5px"
+                            ng-click="addProductInCart(pc.productId)">&#10133
+                    </button>
+                    {{pc.count}}
+                    <button style="padding: 0;border: 0;background: none;margin-left: 5px"
+                            ng-click="decCountProductInCart(pc.productId)">&#10134
+                    </button>
+                </td>
+                <td>{{pc.totalCost}}</td>
+                <td>
+                    <button type="button" class="btn-close" aria-label="Close"
+                            style="width: 5px;height: 5px"
+                            ng-click="deleteProductByCart(pc.productId)"></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <h5 style="text-align: right">Общая стомость: {{getCart().totalPrice}} руб.</h5>
+        <div class="filter-buttons">
+            <button type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="modal" data-bs-target="#orderForm">
+                Оформить заказ
+            </button>
+            <button class="btn btn-danger" ng-click="cleanCart()">Очистить корзину</button>
+        </div>
+    </div>
+</div>
+<span ng-show="getCart().orders.length==0">В корзине пусто</span>

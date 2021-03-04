@@ -1,0 +1,34 @@
+<div ng-show="userLogged()">
+    <div ng-show="getOrdersHistory() != 0">
+        <h5 style="text-align: center">История</h5>
+        <table class="table" ng-controller="ordersController">
+            <thead>
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">Состав</th>
+                <th scope="col">Стоимость</th>
+                <th scope="col">Адрес</th>
+                <th scope="col">Дата</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="oh in getOrdersHistory()">
+                <th>{{oh.id}}</th>
+                <td>
+                    <ul ng-repeat="oi in oh.orderItems">
+                        <li>{{oi.productTitle}}: {{oi.count}} шт х {{oi.costPerProduct}} руб. = {{oi.totalCost}} руб
+                        </li>
+                    </ul>
+                </td>
+                <td style="width: 70%">{{oh.totalPrice}} руб.</td>
+                <td style="font-size: 12px; overflow-x: auto">{{oh.address}}</td>
+                <td style="width: 70%">{{oh.createdAt}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <h4 ng-show="getOrdersHistory() == 0">У вас пока нет заказов</h4>
+</div>
+<div ng-show="!userLogged()">
+    <h3>Для просмотра истории заказов <a href="#!/auth">авторизуйтесь</a></h3>
+</div>
