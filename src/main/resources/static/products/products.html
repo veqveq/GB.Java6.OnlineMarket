@@ -1,0 +1,81 @@
+<div class="catalog-page">
+    <div class="filter">
+        <h4>Фильтр</h4>
+        <form ng-submit="fillTable()">
+            <div class="row mb-3">
+                <label for="title" class="col-sm-2 col-form-label" style="width: 100%">Название
+                    продукта</label>
+                <input type="text" class="form-control" ng-model="filter.title" id="title"
+                       placeholder="Название">
+            </div>
+            <div class="row mb-3">
+                <label for="min-price" class="col-sm-2 col-form-label" style="width: 100%">Минимальная
+                    цена</label>
+                <input type="number" ng-model="filter.min" class="form-control" id="min-price"
+                       placeholder="0">
+            </div>
+            <div class="row mb-3">
+                <label for="max-price" class="col-sm-2 col-form-label" style="width: 100%">Максимальная
+                    цена</label>
+                <input type="number" class="form-control" ng-model="filter.max" id="max-price"
+                       placeholder="999">
+            </div>
+            <div class="filter-buttons">
+                <button type="submit" class="btn btn-success">Применить</button>
+                <button type="reset" ng-click="cleanFilter()" class="btn btn-danger">Очистить</button>
+            </div>
+        </form>
+    </div>
+    <div class="products-table">
+        <h4>Каталог</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Наименование</th>
+                <th scope="col">Цена</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in ProductsList">
+                <th scope="row">{{p.title}}</th>
+                <td>{{p.cost}}</td>
+                <td ng-controller="cartController">
+                    <button ng-show="userLogged()" type="button" style="margin-right: 10px" class="btn btn-success"
+                            ng-click="addProductInCart(p.id)">
+                        Добавить
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div style="display: flex; justify-content: space-between ">
+            <nav aria-label="Page navigation example" ng-model="filter.numb">
+                <ul class="pagination" style="margin: 0px">
+
+                    <li ng-class="ProductsPage.first ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" ng-click="fillTable(ProductsPage.number)"><</a>
+                    </li>
+
+                    <li data-ng-repeat="index in PageArray"
+                        ng-class="ProductsPage.number == index-1 ? 'page-item active' : 'page-item'">
+                        <a class="page-link" ng-click="fillTable(index)">{{index}}</a>
+                    </li>
+
+                    <li ng-class="ProductsPage.last ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" ng-click="fillTable(ProductsPage.number + 2)">></a>
+                    </li>
+                </ul>
+            </nav>
+            <div style="display: flex; min-width: 200px; vertical-align: center">
+                <h5 style="font-size: 18px; min-inline-size: 140px; margin: 0; align-self: center">Показывать по</h5>
+                <select id="pagination" class="form-select" aria-label="Default select example"
+                        style="max-width: 150px" ng-click="changePagination()" ng-model="filter.size">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

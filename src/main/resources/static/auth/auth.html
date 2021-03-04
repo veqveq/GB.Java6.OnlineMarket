@@ -1,0 +1,50 @@
+<div class="auth-form" ng-controller="authController">
+    <div class="modal fade" id="registerForm" data-bs-backdrop="static"
+         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Регистрация нового
+                        пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="loginReg" class="form-label">Имя
+                            пользователя: </label>
+                        <input ng-model="user.username" type="text" class="form-control"
+                               id="loginReg"
+                               placeholder="Введите логин">
+                    </div>
+                    <div class="md-3">
+                        <label for="passReg" class="form-label">Пароль: </label>
+                        <input ng-model="user.password" type="password" class="form-control"
+                               placeholder="Введите пароль" id="passReg">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Отмена
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                            ng-click="doRegistration()">Зарегистрироваться
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h3>Авторизация</h3>
+    <form class="row" ng-submit="tryToAuth()">
+        <input ng-model="user.username" type="text" class="form-control auth-form-comp"
+               placeholder="Введите логин">
+        <input ng-model="user.password" type="password" class="form-control auth-form-comp"
+               placeholder="Введите пароль">
+        <button type="submit" class="btn btn-primary auth-form-comp">Авторизоваться</button>
+        <p class="reg-link auth-form-comp">Нет учетной записи?
+            <a style="color: #759de3" type="button" data-bs-toggle="modal"
+               data-bs-target="#registerForm">Зарегистрироваться</a>
+        </p>
+    </form>
+</div>
