@@ -16,100 +16,100 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="modal fade" id="orderForm" data-bs-backdrop="static"
+     data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabelOrder"
+     aria-hidden="true">
+    <div class="modal-dialog" ng-controller="cartController">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabelOrder">Оформление
+                    заказа</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <h3>Получатель: {{getUser()}}</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Товар</th>
+                            <th scope="col">Итого</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="pc in getCart().orders">
+                            <th>{{pc.productTitle}}</th>
+                            <td style="font-size: smaller">{{pc.count + ' шт. x' +
+                                pc.costPerProduct + ' руб. =' + pc.totalCost +'
+                                руб.'}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <h3>Общая стомость: {{CartSum}} руб.</h3>
+                    <div class="col-12">
+                        <label for="inputAddress" class="form-label">Адрес
+                            доставки</label>
+                        <input ng-model="order.address" type="text"
+                               class="form-control"
+                               id="inputAddress"
+                               placeholder="125009, Москва, ул. Тверская, д.23, стр.2, кв.7">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Отмена
+                </button>
+                <button type="button" class="btn btn-primary"
+                        data-bs-dismiss="modal"
+                        ng-click="makeOrder()">Оформить заказ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="registerForm" data-bs-backdrop="static"
+     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" ng-controller="authController">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Регистрация нового
+                    пользователя</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="loginReg" class="form-label">Имя
+                        пользователя: </label>
+                    <input ng-model="user.username" type="text" class="form-control"
+                           id="loginReg"
+                           placeholder="Введите логин">
+                </div>
+                <div class="md-3">
+                    <label for="passReg" class="form-label">Пароль: </label>
+                    <input ng-model="user.password" type="password" class="form-control"
+                           placeholder="Введите пароль" id="passReg">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Отмена
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        ng-click="doRegistration()">Зарегистрироваться
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <header class="sticky-top">
     <div class="header-pane" ng-controller="indexController">
-        <div class="modal fade" id="orderForm" data-bs-backdrop="static"
-             data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabelOrder"
-             aria-hidden="true">
-            <div class="modal-dialog" ng-controller="cartController">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabelOrder">Оформление
-                            заказа</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row g-3">
-                            <h3>Получатель: {{getUser()}}</h3>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Товар</th>
-                                    <th scope="col">Итого</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="pc in getCart().orders">
-                                    <th>{{pc.productTitle}}</th>
-                                    <td style="font-size: smaller">{{pc.count + ' шт. x' +
-                                        pc.costPerProduct + ' руб. =' + pc.totalCost +'
-                                        руб.'}}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <h3>Общая стомость: {{CartSum}} руб.</h3>
-                            <div class="col-12">
-                                <label for="inputAddress" class="form-label">Адрес
-                                    доставки</label>
-                                <input ng-model="order.address" type="text"
-                                       class="form-control"
-                                       id="inputAddress"
-                                       placeholder="125009, Москва, ул. Тверская, д.23, стр.2, кв.7">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                                data-bs-dismiss="modal">
-                            Отмена
-                        </button>
-                        <button type="button" class="btn btn-primary"
-                                data-bs-dismiss="modal"
-                                ng-click="makeOrder()">Оформить заказ
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="registerForm" data-bs-backdrop="static"
-             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" ng-controller="authController">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Регистрация нового
-                            пользователя</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="loginReg" class="form-label">Имя
-                                пользователя: </label>
-                            <input ng-model="user.username" type="text" class="form-control"
-                                   id="loginReg"
-                                   placeholder="Введите логин">
-                        </div>
-                        <div class="md-3">
-                            <label for="passReg" class="form-label">Пароль: </label>
-                            <input ng-model="user.password" type="password" class="form-control"
-                                   placeholder="Введите пароль" id="passReg">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Отмена
-                        </button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                                ng-click="doRegistration()">Зарегистрироваться
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="header-links container">
             <ul class="header-links-list">
                 <li>

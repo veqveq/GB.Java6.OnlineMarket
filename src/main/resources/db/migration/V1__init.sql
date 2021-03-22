@@ -61,6 +61,30 @@ create table users_roles_tbl
     foreign key (role_id_fld) references roles_tbl (id_fld)
 );
 
+create table carts_tbl
+(
+    id_fld         UUID     not null,
+    cart_price_fld int,
+    created_at_fld datetime not null default current_timestamp(),
+    updated_at_fld datetime not null default current_timestamp(),
+    primary key (id_fld)
+);
+
+create table cart_items_tbl
+(
+    id_fld               bigint   not null,
+    product_id_fld       bigint   not null,
+    count_fld            int      not null,
+    cost_per_product_fld int      not null,
+    cart_id_fld          UUID     not null,
+    item_price_fld       int,
+    created_at_fld       datetime not null default current_timestamp(),
+    updated_at_fld       datetime not null default current_timestamp(),
+    primary key (id_fld),
+    foreign key (product_id_fld) references products_tbl (id_fld),
+    foreign key (cart_id_fld) references carts_tbl (id_fld)
+);
+
 insert into products_tbl (title_fld, cost_fld)
 values ('Product 1', 10),
        ('Product 2', 15),
