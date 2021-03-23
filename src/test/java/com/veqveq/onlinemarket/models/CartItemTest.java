@@ -19,7 +19,6 @@ public class CartItemTest {
     public void initializationTest(){
         CartItem cartItem = new CartItem(product);
         Assertions.assertEquals(1, cartItem.getCount());
-        Assertions.assertEquals(100,cartItem.getItemPrice());
     }
 
     @Test
@@ -27,7 +26,6 @@ public class CartItemTest {
         CartItem cartItem = new CartItem(product);
         cartItem.decCount();
         Assertions.assertEquals(0, cartItem.getCount());
-        Assertions.assertEquals(0,cartItem.getItemPrice());
     }
 
     @Test
@@ -35,6 +33,5 @@ public class CartItemTest {
         CartItem cartItem = new CartItem(product);
         cartItem.incCount();
         Assertions.assertEquals(2, cartItem.getCount());
-        Assertions.assertEquals(200,cartItem.getItemPrice());
     }
 }

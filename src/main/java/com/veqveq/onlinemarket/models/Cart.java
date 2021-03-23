@@ -10,10 +10,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "carts_tbl")
@@ -46,7 +44,7 @@ public class Cart {
 
     public void recalculate() {
         cartPrice = cartItems.stream()
-                .mapToInt(CartItem::getItemPrice)
+                .mapToInt((ci) -> ci.getCount() * ci.getCostPerProduct())
                 .reduce(Integer::sum).orElse(0);
     }
 
@@ -56,11 +54,25 @@ public class Cart {
                 .findFirst();
     }
 
-    public void addItem(CartItem cartItem) {
-        cartItems.add(cartItem);
+    public void addItem(CartItem cartItem, CartItem... cartItems) {
+        this.cartItems.add(cartItem);
+        if (cartItems.length != 0) {
+            this.cartItems.addAll(Arrays.asList(cartItems));
+        }
     }
 
-    public void removeItem(CartItem cartItem) {
-        cartItems.remove(cartItem);
+    public void removeItem(Product product) {
+        for (CartItem ci : cartItems) {
+            if (ci.getProduct().equals(product)) {
+                cartItems.remove(ci);
+                return;
+            }
+        }
+        throw new ResourceNotFoundException("Product " + product.getTitle() + " not found in cart");
+    }
+
+    public void cleanCart() {
+        cartItems.clear();
+        cartPrice = 0;
     }
 }

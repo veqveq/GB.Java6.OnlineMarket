@@ -15,8 +15,12 @@ import java.util.UUID;
 public class CartService {
     private final CartRepository cartRepository;
 
-    public void createCart() {
-        cartRepository.save(new Cart());
+    public void createCart(Cart cart) {
+        cartRepository.save(cart);
+    }
+
+    public Cart getCart(UUID cartId) {
+        return findCart(cartId);
     }
 
     public void addToCart(UUID cartId, Product product) {
@@ -25,16 +29,29 @@ public class CartService {
                 CartItem::incCount,
                 () -> currentCart.addItem(new CartItem(product))
         );
+        currentCart.recalculate();
+    }
+
+    public void decInCart(UUID cartId, Product product) {
+        Cart currentCart = findCart(cartId);
+        CartItem currentItem = currentCart.findItem(product).orElseThrow(() -> new ResourceNotFoundException("Product " + product.getTitle() + " not found in cart"));
+        if (currentItem.getCount() == 1) {
+            currentCart.removeItem(product);
+        } else {
+            currentItem.decCount();
+        }
+        currentCart.recalculate();
     }
 
     public void removeInCart(UUID cartId, Product product) {
         Cart currentCart = findCart(cartId);
-        CartItem currentItem = currentCart.findItem(product).orElseThrow(() -> new ResourceNotFoundException("Product " + product.getTitle() + " not found in cart"));
-        if (currentItem.getCount() == 1) {
-            currentCart.removeItem(currentItem);
-        } else {
-            currentItem.decCount();
-        }
+        currentCart.removeItem(product);
+        currentCart.recalculate();
+    }
+
+    public void cleanCart(UUID cartId) {
+        Cart currentCart = findCart(cartId);
+        currentCart.cleanCart();
     }
 
     private Cart findCart(UUID cartId) {

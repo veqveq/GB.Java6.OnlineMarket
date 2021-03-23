@@ -32,9 +32,6 @@ public class CartItem {
     @Column(name = "cost_per_product_fld")
     private int costPerProduct;
 
-    @Column(name = "item_price_fld")
-    private int itemPrice;
-
     @Column(name = "created_at_fld")
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -47,20 +44,13 @@ public class CartItem {
         this.product = product;
         this.count = 1;
         this.costPerProduct = product.getCost();
-        recalculate();
     }
 
     public void decCount() {
         count--;
-        recalculate();
     }
 
     public void incCount() {
         count++;
-        recalculate();
-    }
-
-    private void recalculate() {
-        itemPrice = count * costPerProduct;
     }
 }
