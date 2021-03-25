@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cart_items_fld")
+@Table(name = "cart_items_tbl")
 @NoArgsConstructor
 @Data
 public class CartItem {

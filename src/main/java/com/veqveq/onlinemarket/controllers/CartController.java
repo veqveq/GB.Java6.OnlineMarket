@@ -25,33 +25,37 @@ public class CartController {
     }
 
     @PostMapping("/get")
-    private CartDto getCart(@RequestParam(name = "cartId") UUID cartId) {
-        return new CartDto(cartService.getCart(cartId));
+    private Cart getCart(@RequestParam(name = "uuid") String cartId) {
+        return cartService.getCart(formUUID(cartId));
     }
 
     @PostMapping("/add/{productId}")
     private void addOrder(@PathVariable Long productId, @RequestParam(name = "uuid") String cartId) {
-        UUID cart = UUID.fromString(cartId);
-        cartService.addToCart(cart, productService.findById(productId).orElseThrow(() ->
+        cartService.addToCart(formUUID(cartId), productService.findById(productId).orElseThrow(() ->
                 new ResourceNotFoundException("Product by id: " + productId + " not found")));
     }
 
     @PostMapping("/clean")
-    private void cleanCart(@RequestParam(name = "uuid") UUID cartId) {
-        cartService.cleanCart(cartId);
+    private void cleanCart(@RequestParam(name = "uuid") String cartId) {
+        cartService.cleanCart(formUUID(cartId));
     }
 
     @PostMapping("/delete/{productId}")
     private void deleteProductById(@PathVariable Long productId,
-                                   @RequestParam(name = "uuid") UUID cartId) {
-        cartService.removeInCart(cartId, productService.findById(productId).orElseThrow(() ->
+                                   @RequestParam(name = "uuid") String cartId) {
+        cartService.removeInCart(formUUID(cartId), productService.findById(productId).orElseThrow(() ->
                 new ResourceNotFoundException("Product by id: " + productId + " not found")));
     }
 
     @PostMapping("/dec/{productId}")
     private void decrementProduct(@PathVariable Long productId,
-                                  @RequestParam(name = "uuid") UUID cartId) {
-        cartService.decInCart(cartId, productService.findById(productId).orElseThrow(() ->
+                                  @RequestParam(name = "uuid") String cartId) {
+        cartService.decInCart(formUUID(cartId), productService.findById(productId).orElseThrow(() ->
                 new ResourceNotFoundException("Product by id: " + productId + " not found")));
+    }
+
+    private UUID formUUID(String uuidToString){
+        uuidToString = uuidToString.replace("\"","");
+        return UUID.fromString(uuidToString);
     }
 }
