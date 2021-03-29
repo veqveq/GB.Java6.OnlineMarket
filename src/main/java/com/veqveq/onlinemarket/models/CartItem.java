@@ -1,6 +1,5 @@
 package com.veqveq.onlinemarket.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,49 +9,58 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "order_items_tbl")
+@Table(name = "cart_items_tbl")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class OrderItem {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_fld")
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id_fld")
+    private Cart cart;
+
     @ManyToOne
     @JoinColumn(name = "product_id_fld")
     private Product product;
-    @ManyToOne
-    @JoinColumn(name = "order_id_fld")
-    private Order order;
+
     @Column(name = "count_fld")
     private int count;
+
     @Column(name = "cost_per_product_fld")
-    private int costPerProduct;
-    @Column(name = "created_at_fld")
+    private int cost;
+
+    @Column(name = "item_price_fld")
+    private int itemPrice;
+
     @CreationTimestamp
+    @Column(name = "created_at_fld")
     private LocalDateTime createdAt;
-    @Column(name = "updated_at_fld")
+
     @UpdateTimestamp
+    @Column(name = "updated_at_fld")
     private LocalDateTime updatedAt;
 
-    public OrderItem(Product product) {
+    public CartItem(Product product) {
         this.product = product;
+        this.cost = product.getCost();
         this.count = 1;
-        this.costPerProduct = product.getCost();
+        recalculate();
     }
 
-    public OrderItem(CartItem cartItem) {
-        this.product = cartItem.getProduct();
-        this.count=cartItem.getCount();
-        this.costPerProduct = cartItem.getCost();
-    }
-
-    public void incCount() {
+    public void inc() {
         count++;
+        recalculate();
     }
 
-    public void decCount() {
+    public void dec() {
         count--;
+        recalculate();
+    }
+
+    private void recalculate() {
+        itemPrice = count * cost;
     }
 }
