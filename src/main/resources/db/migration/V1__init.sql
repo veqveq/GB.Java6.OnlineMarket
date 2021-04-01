@@ -117,4 +117,26 @@ values ('ROLE_ADMIN'),
 
 insert into users_roles_tbl(user_id_fld, role_id_fld)
 values (1, 2),
-       (2, 1)
+       (2, 1);
+
+create table carts_tbl
+(
+    id_fld         UUID not null,
+    cart_price_fld int,
+    primary key (id_fld)
+);
+
+create table cart_items_tbl
+(
+    id_fld               bigint not null auto_increment,
+    cart_id_fld          UUID,
+    product_id_fld       bigint not null,
+    count_fld            int    not null,
+    cost_per_product_fld int    not null,
+    item_price_fld       int    not null,
+    created_at_fld       datetime default current_timestamp(),
+    updated_at_fld       datetime default current_timestamp(),
+    primary key (id_fld),
+    foreign key (cart_id_fld) references carts_tbl (id_fld),
+    foreign key (product_id_fld) references products_tbl (id_fld)
+);

@@ -1,69 +1,95 @@
 angular.module('app').controller('cartController', function ($scope, $http, $localStorage, $location) {
     const rootPath = 'http://localhost:8189/app';
-    const apiPath = rootPath + '/api/v1';
-    $scope.deleteProductByCart = function (id) {
-        $http.get(apiPath + '/cart/delete/' + id)
+    const apiPath = rootPath + '/api/v1/';
+
+    $scope.fillCart = function () {
+        $http({
+            url: apiPath + 'cart/get',
+            method: 'POST',
+            params: {
+                cartId: $localStorage.CartId,
+            }
+        })
             .then(function (response) {
+                $localStorage.Cart = response.data;
+            })
+    }
+
+    $scope.getCart = function () {
+        return $localStorage.Cart;
+    }
+
+    $scope.deleteProductByCart = function (id) {
+        $http({
+            url: apiPath + 'cart/del',
+            method: 'POST',
+            params: {
+                productId: id,
+                cartId: $localStorage.CartId,
+            }
+        })
+            .then(function () {
                 $scope.fillCart();
             });
     };
 
     $scope.decCountProductInCart = function (id) {
-        $http.get(apiPath + '/cart/dec/' + id)
-            .then(function (response) {
+        $http({
+            url: apiPath + 'cart/dec',
+            method: 'POST',
+            params: {
+                productId: id,
+                cartId: $localStorage.CartId,
+            }
+        })
+            .then(function () {
                 $scope.fillCart();
             });
     };
 
+    $scope.addProductInCart = function (id) {
+        $http({
+            url: apiPath + 'cart/add',
+            method: 'POST',
+            params: {
+                productId: id,
+                cartId: $localStorage.CartId,
+            }
+        })
+            .then(function () {
+                $scope.fillCart();
+            })
+    };
+
     $scope.cleanCart = function () {
-        $http.get(apiPath + '/cart/clean')
-            .then(function (response) {
+        $http({
+            url: apiPath + 'cart/clean',
+            method: 'POST',
+            params: {
+                cartId: $localStorage.CartId,
+            }
+        })
+            .then(function () {
                 $scope.fillCart();
             })
     };
 
     $scope.makeOrder = function () {
         $http({
-            url: apiPath + '/orders',
+            url: apiPath + 'orders',
             method: 'POST',
             params: {
                 address: $scope.order ? $scope.order.address : null,
+                cartId: $localStorage.CartId,
             },
         })
-            .then(function successCallback(response) {
+            .then(function successCallback() {
                 window.alert("Заказ успешно оформлен!")
                 $scope.fillCart();
-                $scope.getOrdersHistory();
+                // $scope.getOrdersHistory();
                 $location.path('/orders');
-            }, function errorCallback(response) {
+            }, function errorCallback() {
                 window.alert("Ошибка оформления заказа");
             })
     };
-
-    $scope.fillCart = function () {
-        $http.get(apiPath + '/cart/')
-            .then(function (response) {
-                console.log(response.data)
-                $localStorage.Cart = response.data;
-            })
-    };
-
-    $scope.addProductInCart = function (id) {
-        $http.get(apiPath + '/cart/add/' + id)
-            .then(function (response) {
-                $scope.fillCart();
-            })
-    };
-
-    $scope.getCart = function () {
-        return $localStorage.Cart;
-    }
-
-    $scope.getOrdersHistory = function () {
-        $http.get(apiPath + '/orders')
-            .then(function (response) {
-                $localStorage.OrdersHistory = response.data;
-            });
-    };
-
 });

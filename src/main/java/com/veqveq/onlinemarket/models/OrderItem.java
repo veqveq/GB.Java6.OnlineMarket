@@ -42,6 +42,12 @@ public class OrderItem {
         this.costPerProduct = product.getCost();
     }
 
+    public OrderItem(CartItem cartItem) {
+        this.product = cartItem.getProduct();
+        this.count=cartItem.getCount();
+        this.costPerProduct = cartItem.getCost();
+    }
+
     public void incCount() {
         count++;
     }
