@@ -10,7 +10,6 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
                     $localStorage.authUser = response.data.username;
                     $scope.authUser = response.data.username;
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
-                    console.log($http.defaults.headers.common.Authorization);
                     $scope.user.username = null;
                     $scope.user.password = null;
                     $location.path('/orders');

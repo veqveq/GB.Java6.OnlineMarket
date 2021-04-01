@@ -39,17 +39,10 @@
                         </tr>
                         </thead>
                         <tbody>
-<<<<<<< HEAD
-                        <tr ng-repeat="pc in getCart().orders">
-                            <th>{{pc.productTitle}}</th>
-                            <td style="font-size: smaller">{{pc.count + ' шт. x' +
-                                pc.costPerProduct + ' руб. =' + pc.totalCost +'
-=======
                         <tr ng-repeat="pc in getCart().cartItems">
                             <th>{{pc.product.title}}</th>
                             <td style="font-size: smaller">{{pc.count + ' шт. x' +
                                 pc.cost + ' руб. =' + pc.itemCost +'
->>>>>>> update_cart
                                 руб.'}}
                             </td>
                         </tr>
