@@ -6,7 +6,7 @@ angular.module('app').controller('ordersController', function ($scope, $http, $l
     }
 
     $scope.getOrdersHistory = function () {
-        return $localStorage.OrdersHistory;
+        return $localStorage.OrdersHistory ? $localStorage.OrdersHistory : null;
     }
-    $scope.getOrdersHistory();
+    // $scope.getOrdersHistory();
 });

@@ -24,7 +24,7 @@ public class OrderController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    private void makeOrder(@RequestParam String address, @RequestBody UUID cartId, Principal principal) {
+    private void makeOrder(@RequestParam String address, @RequestParam UUID cartId, Principal principal) {
         User user = userService.findByUsername(principal.getName()).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("User by name: [%s] not found", principal.getName())));
         orderService.saveOrder(user, cartService.getCart(cartId), address);

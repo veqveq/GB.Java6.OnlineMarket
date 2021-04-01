@@ -25,13 +25,13 @@ public class CartController {
     }
 
     @PostMapping("/get")
-    public CartDto getCart(@RequestBody UUID cartId) {
+    public CartDto getCart(@RequestParam UUID cartId) {
         return new CartDto(cartService.getCart(cartId));
     }
 
-    @PostMapping("/add/{productId}")
+    @PostMapping("/add")
     @Transactional
-    public void addOrIncItem(@RequestBody UUID cartId, @PathVariable Long productId) {
+    public void addOrIncItem(@RequestParam UUID cartId, @RequestParam Long productId) {
         CartItem currentCartItem = cartService.getCart(cartId).findItem(productId);
         if (currentCartItem == null) {
             Product product = productService.findById(productId)
@@ -42,13 +42,18 @@ public class CartController {
         }
     }
 
-    @PostMapping("/remove/{productId}")
-    public void removeItem(@RequestBody UUID cartId, @PathVariable Long productId) {
+    @PostMapping("/del")
+    public void removeItem(@RequestParam UUID cartId, @RequestParam Long productId) {
         cartService.removeItem(cartId, productId);
     }
 
-    @PostMapping("/dec/{productId}")
-    public void decItem(@RequestBody UUID cartId, @PathVariable Long productId) {
+    @PostMapping("/dec")
+    public void decItem(@RequestParam UUID cartId, @RequestParam Long productId) {
         cartService.decItemCount(cartId, productId);
+    }
+
+    @PostMapping("/clean")
+    public void cleanCart(@RequestParam UUID cartId) {
+        cartService.cleanCart(cartId);
     }
 }

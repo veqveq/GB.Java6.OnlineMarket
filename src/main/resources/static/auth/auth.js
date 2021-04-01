@@ -10,6 +10,7 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
                     $localStorage.authUser = response.data.username;
                     $scope.authUser = response.data.username;
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
+                    console.log($http.defaults.headers.common.Authorization);
                     $scope.user.username = null;
                     $scope.user.password = null;
                     $location.path('/orders');
@@ -29,12 +30,17 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
     };
 
     $scope.fillCart = function () {
-        $http.get(apiPath + '/cart/')
+        $http({
+            url: apiPath + '/cart/get',
+            method: 'POST',
+            params:{
+                cartId : $localStorage.CartId,
+            }
+        })
             .then(function (response) {
-                console.log(response.data)
                 $localStorage.Cart = response.data;
             })
-    };
+    }
 
     $scope.doRegistration = function () {
         $http({
@@ -64,6 +70,7 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
         delete $localStorage.authUser;
         delete $localStorage.Cart;
         delete $localStorage.OrdersHistory;
+        delete $localStorage.CartId;
     };
 
 });
