@@ -4,7 +4,6 @@ import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
 import com.veqveq.onlinemarket.models.Cart;
 import com.veqveq.onlinemarket.models.CartItem;
 import com.veqveq.onlinemarket.models.Product;
-import com.veqveq.onlinemarket.repositories.CartItemRepository;
 import com.veqveq.onlinemarket.repositories.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CartService {
     public final CartRepository cartRepository;
-    public final CartItemRepository cartItemRepository;
 
     public UUID createCart() {
         Cart cart = new Cart();
@@ -32,15 +30,18 @@ public class CartService {
     @Transactional
     public void addItem(UUID cartId, Product product) {
         Cart cart = getCart(cartId);
-        cart.add(new CartItem(product));
-        cart.recalculate();
+        if (cart.findItem(product.getId()) == null) {
+            cart.add(new CartItem(product));
+            cart.recalculate();
+            return;
+        }
+        incItemCount(cartId, product.getId());
     }
 
     @Transactional
     public void removeItem(UUID cartId, Long productId) {
         Cart cart = getCart(cartId);
         cart.remove(productId);
-        cartItemRepository.removeByProduct_Id(productId);
         cart.recalculate();
     }
 
@@ -73,7 +74,7 @@ public class CartService {
     @Transactional
     public void cleanCart(UUID cartId) {
         Cart cart = getCart(cartId);
+        cart.getCartItems().forEach((ci) -> ci.setCart(null));
         cart.getCartItems().clear();
-        cartItemRepository.removeAllByCart_Id(cartId);
     }
 }

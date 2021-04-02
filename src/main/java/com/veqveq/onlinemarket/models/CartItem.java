@@ -47,7 +47,7 @@ public class CartItem {
         this.product = product;
         this.cost = product.getCost();
         this.count = 1;
-        recalculate();
+        this.itemPrice = count * cost;
     }
 
     public void inc() {
@@ -60,7 +60,21 @@ public class CartItem {
         recalculate();
     }
 
-    private void recalculate() {
+    public void recalculate() {
         itemPrice = count * cost;
+    }
+
+    @Override
+    public String toString() {
+        return "CartItem{" +
+                "id=" + id +
+                ", cart=" + cart.getId() +
+                ", product=" + product +
+                ", count=" + count +
+                ", cost=" + cost +
+                ", itemPrice=" + itemPrice +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

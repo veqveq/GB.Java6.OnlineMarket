@@ -30,27 +30,24 @@ public class CartControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private static final Logger logger = Logger.getLogger("");
-
     @Test
     public void createCartTest() throws Exception {
-        MvcResult result = mvc.perform(get("/api/v1/cart")
+        MvcResult result = mvc.perform(post("/api/v1/cart")
                 .contentType(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andReturn();
         String cartId = result.getResponse().getContentAsString().replace("\"", "");
         UUID uuid = UUID.fromString(cartId);
         Assertions.assertNotNull(uuid);
-        logger.info(uuid.toString());
     }
 
     @Test
     public void getCartTest() throws Exception {
-        String cartId = mvc.perform(get("/api/v1/cart"))
-                .andReturn().getResponse().getContentAsString();
+        String cartId = mvc.perform(post("/api/v1/cart"))
+                .andReturn().getResponse().getContentAsString().replace("\"", "");
 
         mvc.perform(post("/api/v1/cart/get")
-                .param("uuid", cartId))
+                .param("cartId", cartId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cartItems").isArray())
                 .andExpect(jsonPath("$.cartItems", hasSize(0)))
@@ -59,24 +56,127 @@ public class CartControllerTest {
     }
 
     @Test
-    public void addToCartTest() throws Exception {
-        String cartId = mvc.perform(get("/api/v1/cart"))
-                .andReturn().getResponse().getContentAsString();
+    public void addOrIncItemTest() throws Exception {
+        String cartId = mvc.perform(post("/api/v1/cart"))
+                .andReturn().getResponse().getContentAsString().replace("\"", "");
 
-        mvc.perform(post("/api/v1/cart/add/1")
-                .param("uuid", cartId))
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "1"))
                 .andExpect(status().isOk());
 
-        mvc.perform(post("/api/v1/cart/add/4")
-                .param("uuid", cartId))
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "4"))
                 .andExpect(status().isNotFound());
 
-        MvcResult result = mvc.perform(post("/api/v1/cart/get")
-                .param("uuid", cartId))
-//                .andExpect(jsonPath("$.cartItems", hasSize(1)))
-                .andExpect(jsonPath("$.cartPrice").isNumber())
-                .andReturn();
-//        Integer cartPrice = Integer.parseInt(jsonPath("$.cartPrice",result));
-        logger.info(result.getResponse().getContentAsString());
+        mvc.perform(post("/api/v1/cart/get")
+                .param("cartId", cartId))
+                .andExpect(jsonPath("$.cartItems", hasSize(1)))
+                .andExpect(jsonPath("$.cartPrice").isNumber());
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "1"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/get")
+                .param("cartId", cartId))
+                .andExpect(jsonPath("$.cartItems", hasSize(1)))
+                .andExpect(jsonPath("$.cartPrice").isNumber());
+    }
+
+    @Test
+    public void removeItemTest() throws Exception {
+        String cartId = mvc.perform(post("/api/v1/cart"))
+                .andReturn().getResponse().getContentAsString().replace("\"", "");
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "1"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "2"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "3"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/del")
+                .param("cartId", cartId)
+                .param("productId", "2"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/get")
+                .param("cartId", cartId))
+                .andExpect(jsonPath("$.cartItems", hasSize(2)))
+                .andExpect(jsonPath("$.cartPrice").isNumber());
+    }
+
+    @Test
+    public void decItemTest() throws Exception {
+        String cartId = mvc.perform(post("/api/v1/cart"))
+                .andReturn().getResponse().getContentAsString().replace("\"", "");
+
+        for (int i = 0; i < 3; i++) {
+            mvc.perform(post("/api/v1/cart/add")
+                    .param("cartId", cartId)
+                    .param("productId", "1"))
+                    .andExpect(status().isOk());
+        }
+
+        for (int i = 0; i < 2; i++) {
+            mvc.perform(post("/api/v1/cart/dec")
+                    .param("cartId", cartId)
+                    .param("productId", "1"))
+                    .andExpect(status().isOk());
+        }
+
+        mvc.perform(post("/api/v1/cart/get")
+                .param("cartId", cartId))
+                .andExpect(jsonPath("$.cartItems", hasSize(1)))
+                .andExpect(jsonPath("$.cartPrice").isNumber());
+
+        mvc.perform(post("/api/v1/cart/dec")
+                .param("cartId", cartId)
+                .param("productId", "1"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/get")
+                .param("cartId", cartId))
+                .andExpect(jsonPath("$.cartItems", hasSize(0)));
+    }
+
+    @Test
+    public void cleanCartTest() throws Exception {
+        String cartId = mvc.perform(post("/api/v1/cart"))
+                .andReturn().getResponse().getContentAsString().replace("\"", "");
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "1"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "2"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/add")
+                .param("cartId", cartId)
+                .param("productId", "3"))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/clean")
+                .param("cartId", cartId))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/cart/get")
+                .param("cartId", cartId))
+                .andExpect(jsonPath("$.cartItems", hasSize(0)));
     }
 }

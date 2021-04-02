@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,8 +23,8 @@ public class Cart {
     @Column(name = "cart_price_fld")
     private int cartPrice;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<CartItem> cartItems;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     public void add(CartItem cartItem) {
         cartItems.add(cartItem);
@@ -35,6 +36,7 @@ public class Cart {
     public void remove(Long productId) {
         for (CartItem ci : cartItems) {
             if (ci.getProduct().getId().equals(productId)) {
+                ci.setCart(null);
                 cartItems.remove(ci);
                 return;
             }
@@ -50,9 +52,12 @@ public class Cart {
     }
 
     public void recalculate() {
+        cartItems.forEach(CartItem::recalculate);
         cartPrice = cartItems.stream()
                 .mapToInt(CartItem::getItemPrice)
                 .reduce(Integer::sum)
                 .orElse(0);
     }
+
+
 }
