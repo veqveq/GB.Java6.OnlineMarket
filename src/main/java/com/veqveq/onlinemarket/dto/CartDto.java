@@ -1,20 +1,23 @@
 package com.veqveq.onlinemarket.dto;
 
-import com.veqveq.onlinemarket.beans.Cart;
+import com.veqveq.onlinemarket.models.Cart;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
-@NoArgsConstructor
 public class CartDto {
-    private List<OrderItemDto> orders;
-    private int totalPrice;
+    private UUID id;
+    private List<CartItemDto> cartItems;
+    private int cartPrice;
 
     public CartDto(Cart cart) {
-        this.orders = cart.getOrders().stream().map(OrderItemDto::new).collect(Collectors.toList());
-        this.totalPrice = cart.getTotalPrice();
+        this.id = cart.getId();
+        this.cartPrice = cart.getCartPrice();
+        this.cartItems = cart.getCartItems().stream()
+                .map(CartItemDto::new)
+                .collect(Collectors.toList());
     }
 }

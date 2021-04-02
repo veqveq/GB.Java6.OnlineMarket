@@ -64,25 +64,7 @@ create table users_roles_tbl
 insert into products_tbl (title_fld, cost_fld)
 values ('Product 1', 10),
        ('Product 2', 15),
-       ('Product 3', 65),
-       ('Product 4', 155),
-       ('Product 5', 70),
-       ('Product 6', 95),
-       ('Product 7', 255),
-       ('Product 8', 1300),
-       ('Product 9', 85),
-       ('Product 10', 40),
-       ('Product 11', 215),
-       ('Product 12', 555),
-       ('Product 13', 725),
-       ('Product 14', 400),
-       ('Product 15', 315),
-       ('Product 16', 205),
-       ('Product 17', 60),
-       ('Product 18', 125),
-       ('Product 19', 330),
-       ('Product 20', 990),
-       ('Product 21', 1950);
+       ('Product 3', 65);
 
 insert into users_tbl (username_fld, password_fld)
 values ('Jackass', '$2y$12$fdgMU9AMXKxZ9Jur1eaO5O2gs9xfifsV7Wh52rJ4wjf.Acv4c8WuS'), //100

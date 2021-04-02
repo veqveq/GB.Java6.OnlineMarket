@@ -1,6 +1,5 @@
 package com.veqveq.onlinemarket.models;
 
-import com.veqveq.onlinemarket.beans.Cart;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
@@ -47,12 +46,14 @@ public class Order {
 
     public Order(Cart cart, User user, String address) {
         this.owner = user;
-        this.totalPrice = cart.getTotalPrice();
+        this.totalPrice = cart.getCartPrice();
         this.orderItems = new ArrayList<>();
-        cart.getOrders().stream().forEach((oi) -> {
-            oi.setOrder(this);
-            orderItems.add(oi);
-        });
+        cart.getCartItems().stream().
+                map(OrderItem::new)
+                .forEach((oi) -> {
+                    oi.setOrder(this);
+                    orderItems.add(oi);
+                });
         this.address = address;
     }
 }

@@ -29,12 +29,17 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
     };
 
     $scope.fillCart = function () {
-        $http.get(apiPath + '/cart/')
+        $http({
+            url: apiPath + '/cart/get',
+            method: 'POST',
+            params:{
+                cartId : $localStorage.CartId,
+            }
+        })
             .then(function (response) {
-                console.log(response.data)
                 $localStorage.Cart = response.data;
             })
-    };
+    }
 
     $scope.doRegistration = function () {
         $http({
@@ -64,6 +69,7 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
         delete $localStorage.authUser;
         delete $localStorage.Cart;
         delete $localStorage.OrdersHistory;
+        delete $localStorage.CartId;
     };
 
 });

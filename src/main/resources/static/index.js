@@ -37,6 +37,12 @@
         if ($localStorage.currentUser) {
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
         }
+        if (!$localStorage.CartId) {
+            $http.post('http://localhost:8189/app/api/v1/cart')
+                .then(function (response) {
+                    $localStorage.CartId = response.data;
+                })
+        }
     }
 })();
 
@@ -47,7 +53,7 @@ angular.module('app').controller('indexController', function ($scope, $http, $lo
     }
 
     $scope.getCartCounter = function () {
-        return $localStorage.Cart.orders.length;
+        return $localStorage.Cart ? $localStorage.Cart.cartItems.length : 0;
     }
 
     $scope.userLogged = function () {
