@@ -7,11 +7,12 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
         $http.post(rootPath + '/auth', $scope.user)
             .then(function successCallback(response) {
                 if (response.data.token) {
-                    $localStorage.authUser = response.data.username;
+                    $localStorage.authUser = response.data;
                     $scope.authUser = response.data.username;
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $scope.user.username = null;
                     $scope.user.password = null;
+                    window.location.reload();
                     $location.path('/orders');
                     $scope.getOrdersHistory();
                     $scope.fillCart();
@@ -32,8 +33,8 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
         $http({
             url: apiPath + '/cart/get',
             method: 'POST',
-            params:{
-                cartId : $localStorage.CartId,
+            params: {
+                cartId: $localStorage.CartId,
             }
         })
             .then(function (response) {
@@ -70,6 +71,7 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
         delete $localStorage.Cart;
         delete $localStorage.OrdersHistory;
         delete $localStorage.CartId;
+        $location.path('/');
     };
 
 });

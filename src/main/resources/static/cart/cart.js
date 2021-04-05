@@ -86,7 +86,6 @@ angular.module('app').controller('cartController', function ($scope, $http, $loc
             .then(function successCallback() {
                 window.alert("Заказ успешно оформлен!")
                 $scope.fillCart();
-                // $scope.getOrdersHistory();
                 $location.path('/orders');
             }, function errorCallback() {
                 window.alert("Ошибка оформления заказа");

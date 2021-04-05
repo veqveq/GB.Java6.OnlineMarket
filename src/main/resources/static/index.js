@@ -34,22 +34,26 @@
     }
 
     function run($rootScope, $http, $localStorage) {
-        if ($localStorage.currentUser) {
-            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
+        if ($localStorage.authUser) {
+            $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.authUser.token;
         }
-        if (!$localStorage.CartId) {
-            $http.post('http://localhost:8189/app/api/v1/cart')
-                .then(function (response) {
-                    $localStorage.CartId = response.data;
-                })
-        }
+        $http({
+            url: 'http://localhost:8189/app/api/v1/cart',
+            method: 'POST',
+            params: {
+                cartId: $localStorage.CartId ? $localStorage.CartId : null,
+            }
+        })
+            .then(function (response) {
+                $localStorage.CartId = response.data;
+            })
     }
 })();
 
-angular.module('app').controller('indexController', function ($scope, $http, $localStorage, $location) {
+angular.module('app').controller('indexController', function ($scope, $http, $localStorage) {
 
     $scope.getUser = function () {
-        return $localStorage.authUser;
+        return $localStorage.authUser ? $localStorage.authUser.username : null;
     }
 
     $scope.getCartCounter = function () {
