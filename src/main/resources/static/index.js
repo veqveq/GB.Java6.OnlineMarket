@@ -1,4 +1,4 @@
-(function ($localStorage) {
+(function () {
     'use strict';
 
     angular
@@ -6,7 +6,7 @@
         .config(config)
         .run(run);
 
-    function config($routeProvider, $httpProvider) {
+    function config($routeProvider) {
         $routeProvider
             .when('/', {
                 templateUrl: 'home/home.html',
@@ -54,10 +54,6 @@ angular.module('app').controller('indexController', function ($scope, $http, $lo
 
     $scope.getUser = function () {
         return $localStorage.authUser ? $localStorage.authUser.username : null;
-    }
-
-    $scope.getCartCounter = function () {
-        return $localStorage.Cart ? $localStorage.Cart.cartItems.length : 0;
     }
 
     $scope.userLogged = function () {

@@ -1,7 +1,5 @@
 angular.module('app').controller('authController', function ($scope, $http, $localStorage, $location) {
     const rootPath = 'http://localhost:8189/app';
-    const apiPath = rootPath + '/api/v1';
-
 
     $scope.tryToAuth = function () {
         $http.post(rootPath + '/auth', $scope.user)
@@ -12,35 +10,12 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $scope.user.username = null;
                     $scope.user.password = null;
-                    window.location.reload();
                     $location.path('/orders');
-                    $scope.getOrdersHistory();
-                    $scope.fillCart();
                 }
-            }, function errorCallback(response) {
+            }, function errorCallback() {
                 window.alert("Ошибка авторизации. Неверный логин/пароль");
             });
     };
-
-    $scope.getOrdersHistory = function () {
-        $http.get(apiPath + '/orders')
-            .then(function (response) {
-                $localStorage.OrdersHistory = response.data;
-            });
-    };
-
-    $scope.fillCart = function () {
-        $http({
-            url: apiPath + '/cart/get',
-            method: 'POST',
-            params: {
-                cartId: $localStorage.CartId,
-            }
-        })
-            .then(function (response) {
-                $localStorage.Cart = response.data;
-            })
-    }
 
     $scope.doRegistration = function () {
         $http({
@@ -50,7 +25,7 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
                 username: $scope.user ? $scope.user.username : null,
                 password: $scope.user ? $scope.user.password : null,
             },
-        }).then(function successCallback(response) {
+        }).then(function successCallback() {
             $scope.tryToAuth();
         }, function errorCallback(response) {
             if (response.data.status == 409) {
@@ -72,6 +47,6 @@ angular.module('app').controller('authController', function ($scope, $http, $loc
         delete $localStorage.OrdersHistory;
         delete $localStorage.CartId;
         $location.path('/');
+        window.location.reload();
     };
-
 });

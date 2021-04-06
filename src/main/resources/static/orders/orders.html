@@ -1,7 +1,7 @@
-<div ng-show="userLogged()">
-    <div ng-show="getOrdersHistory()">
+<div ng-controller="indexController" ng-show="userLogged()">
+    <div ng-controller="ordersController" ng-show="getOrdersHistory().length != 0">
         <h5 style="text-align: center">История</h5>
-        <table class="table" ng-controller="ordersController">
+        <table class="table">
             <thead>
             <tr>
                 <th scope="col">№</th>
@@ -27,8 +27,8 @@
             </tbody>
         </table>
     </div>
-    <h4 ng-show="!getOrdersHistory()">У вас пока нет заказов</h4>
+    <h4 ng-show="getOrdersHistory().length == 0">У вас пока нет заказов</h4>
 </div>
-<div ng-show="!userLogged()">
+<div ng-controller="indexController" ng-show="!userLogged()">
     <h3>Для просмотра истории заказов <a href="#!/auth">авторизуйтесь</a></h3>
 </div>
