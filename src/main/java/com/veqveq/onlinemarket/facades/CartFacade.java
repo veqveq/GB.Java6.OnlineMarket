@@ -1,5 +1,6 @@
 package com.veqveq.onlinemarket.facades;
 
+import com.veqveq.onlinemarket.factories.CartFactory;
 import com.veqveq.onlinemarket.models.Cart;
 import com.veqveq.onlinemarket.models.User;
 import com.veqveq.onlinemarket.services.CartService;
@@ -18,9 +19,10 @@ public interface CartFacade {
 
 @Service
 @RequiredArgsConstructor
-class CartFacadeService implements CartFacade{
+class CartFacadeService implements CartFacade {
     public final CartService cartService;
     public final UserService userService;
+    public final CartFactory cartFactory;
 
     @Override
     @Transactional
@@ -29,32 +31,8 @@ class CartFacadeService implements CartFacade{
         Cart cart = null;
 
         if (principal != null) user = userService.findByUsername(principal.getName()).orElse(null);
-        if (cartId != null) cart = cartService.getCart(cartId);
+        if (cartId != null) cart = cartService.getCartOpt(cartId).orElse(null);
 
-        if (user == null && cart == null) return cartService.createNewCart().getId();
-
-        if (user == null && cart != null) return cartId;
-
-        if (user != null && cart == null) {
-            Optional<Cart> currentUserCart = cartService.getUserCart(user);
-            if (currentUserCart.isPresent()) {
-                return currentUserCart.get().getId();
-            } else {
-                return cartService.createNewCart(user).getId();
-            }
-        }
-        if (user != null && cart != null) {
-            Optional<Cart> currentUserCart = cartService.getUserCart(user);
-            if (currentUserCart.isPresent()) {
-                if (!currentUserCart.get().getId().equals(cartId)) {
-                    cart.merge(currentUserCart.get());
-                    cartService.deleteCart(currentUserCart.get());
-                    cart.setUser(user);
-                }
-                return cartId;
-            }
-            cart.setUser(user);
-        }
-        return cartId;
+        return cartFactory.createCart(cart, user).getId();
     }
 }

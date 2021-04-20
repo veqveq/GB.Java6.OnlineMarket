@@ -32,8 +32,14 @@ public class CartService {
     }
 
     public Cart getCart(UUID cartId) {
-        return cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart by id :" + cartId + " not found"));
+        return getCartOpt(cartId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Cart by id :" + cartId + " not found")
+                );
+    }
+
+    public Optional<Cart> getCartOpt(UUID cartId){
+        return cartRepository.findById(cartId);
     }
 
     public Optional<Cart> getUserCart(User user){
