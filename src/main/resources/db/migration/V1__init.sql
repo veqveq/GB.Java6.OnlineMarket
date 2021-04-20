@@ -100,7 +100,9 @@ create table carts_tbl
 (
     id_fld         UUID not null,
     cart_price_fld int,
-    primary key (id_fld)
+    owner_id_fld   bigint,
+    primary key (id_fld),
+    foreign key (owner_id_fld) references users_tbl (id_fld)
 );
 
 create table cart_items_tbl

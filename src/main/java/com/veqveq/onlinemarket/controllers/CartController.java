@@ -3,12 +3,15 @@ package com.veqveq.onlinemarket.controllers;
 import com.veqveq.onlinemarket.dto.CartDto;
 import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
 import com.veqveq.onlinemarket.models.Product;
+import com.veqveq.onlinemarket.models.User;
 import com.veqveq.onlinemarket.services.CartService;
 import com.veqveq.onlinemarket.services.ProductService;
+import com.veqveq.onlinemarket.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +22,9 @@ public class CartController {
     private final ProductService productService;
 
     @PostMapping
-    public UUID createCart() {
-        return cartService.createCart();
+    public UUID createCart(@RequestParam(required = false) UUID cartId,
+                           Principal principal) {
+        return cartService.createCart(principal, cartId);
     }
 
     @PostMapping("/get")

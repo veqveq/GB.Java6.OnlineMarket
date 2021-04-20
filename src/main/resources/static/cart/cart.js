@@ -1,18 +1,23 @@
-angular.module('app').controller('cartController', function ($scope, $http, $localStorage, $location) {
-    const rootPath = 'http://localhost:8189/app';
-    const apiPath = rootPath + '/api/v1/';
+angular.module('app').controller('cartController', function ($scope, $http, $localStorage) {
+    const apiPath = 'http://localhost:8189/app/api/v1/';
 
     $scope.fillCart = function () {
         $http({
             url: apiPath + 'cart/get',
             method: 'POST',
             params: {
-                cartId: $localStorage.CartId,
+                cartId: $localStorage.CartId ? $localStorage.CartId : null,
             }
         })
-            .then(function (response) {
-                $localStorage.Cart = response.data;
-            })
+            .then(function successCallback(response) {
+                    $localStorage.Cart = response.data;
+                }, function errorCallback(response) {
+                    if (response.data.status = 404) {
+                        delete $localStorage.Cart;
+                        delete $localStorage.authUser;
+                    }
+                }
+            )
     }
 
     $scope.getCart = function () {
@@ -74,22 +79,9 @@ angular.module('app').controller('cartController', function ($scope, $http, $loc
             })
     };
 
-    $scope.makeOrder = function () {
-        $http({
-            url: apiPath + 'orders',
-            method: 'POST',
-            params: {
-                address: $scope.order ? $scope.order.address : null,
-                cartId: $localStorage.CartId,
-            },
-        })
-            .then(function successCallback() {
-                window.alert("Заказ успешно оформлен!")
-                $scope.fillCart();
-                // $scope.getOrdersHistory();
-                $location.path('/orders');
-            }, function errorCallback() {
-                window.alert("Ошибка оформления заказа");
-            })
-    };
+    $scope.getCartCounter = function () {
+        return $localStorage.Cart ? $localStorage.Cart.cartItems.length : 0;
+    }
+
+    $scope.fillCart();
 });

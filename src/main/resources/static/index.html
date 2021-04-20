@@ -26,11 +26,12 @@
                 <h5 class="modal-title" id="staticBackdropLabelOrder">Оформление
                     заказа</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                        aria-label="Close">
+                </button>
             </div>
             <div class="modal-body">
                 <div class="row g-3">
-                    <h3>Получатель: {{getUser()}}</h3>
+                    <h3 ng-controller="indexController">Получатель: {{getUser()}}</h3>
                     <table class="table">
                         <thead>
                         <tr>
@@ -42,13 +43,13 @@
                         <tr ng-repeat="pc in getCart().cartItems">
                             <th>{{pc.product.title}}</th>
                             <td style="font-size: smaller">{{pc.count + ' шт. x' +
-                                pc.cost + ' руб. =' + pc.itemCost +'
+                                pc.cost + ' руб. =' + pc.itemPrice +'
                                 руб.'}}
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <h3>Общая стомость: {{CartSum}} руб.</h3>
+                    <h3>Общая стомость: {{getCart().cartPrice}} руб.</h3>
                     <div class="col-12">
                         <label for="inputAddress" class="form-label">Адрес
                             доставки</label>
@@ -66,6 +67,7 @@
                 </button>
                 <button type="button" class="btn btn-primary"
                         data-bs-dismiss="modal"
+                        ng-controller="ordersController"
                         ng-click="makeOrder()">Оформить заказ
                 </button>
             </div>
@@ -114,7 +116,7 @@
             <ul class="header-links-list">
                 <li>
                     <a href="#!/">
-                        <div class="auth-bt">
+                        <div class="profile">
                             <div class="auth-icon">
                                 <img src="img/home.svg" alt="На главную">
                             </div>
@@ -123,40 +125,58 @@
                             </div>
                         </div>
                     </a>
+                </li>
                 <li class="dropdown">
-                    <div ng-show="!userLogged()" class="auth-bt">
+                    <div class="profile">
                         <div class="auth-icon">
                             <img src="img/auth.png" alt="Авторизоваться">
                         </div>
-                        <a class="dropdown-toggle" id="navbarAuth" role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <div class="auth-text">
-                                <p>Авторизация</p>
+                        <div ng-show="!userLogged()" class="auth-btn">
+                            <a class="dropdown-toggle" id="navbarAuth" role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                <div class="auth-text">
+                                    <p>Авторизация</p>
+                                </div>
+                            </a>
+                            <div ng-controller="authController" ng-show="!userLogged()" class="dropdown-menu"
+                                 aria-labelledby="navbarAuth">
+                                <form class="row" ng-submit="tryToAuth()" ng-show="!authorized">
+                                    <input ng-model="user.username" type="text" class="form-control"
+                                           placeholder="Введите логин">
+                                    <input ng-model="user.password" type="password" class="form-control"
+                                           placeholder="Введите пароль">
+                                    <button type="submit" class="btn btn-primary">Авторизоваться</button>
+                                    <p class="reg-link">Нет учетной записи?
+                                        <a style="color: #759de3" type="button" data-bs-toggle="modal"
+                                           data-bs-target="#registerForm">Зарегистрироваться</a>
+                                    </p>
+                                </form>
                             </div>
-                        </a>
-                        <div ng-controller="authController" ng-show="!userLogged()" class="dropdown-menu"
-                             aria-labelledby="navbarAuth">
-                            <form class="row" ng-submit="tryToAuth()" ng-show="!authorized">
-                                <input ng-model="user.username" type="text" class="form-control"
-                                       placeholder="Введите логин">
-                                <input ng-model="user.password" type="password" class="form-control"
-                                       placeholder="Введите пароль">
-                                <button type="submit" class="btn btn-primary">Авторизоваться</button>
-                                <p class="reg-link">Нет учетной записи?
-                                    <a style="color: #759de3" type="button" data-bs-toggle="modal"
-                                       data-bs-target="#registerForm">Зарегистрироваться</a>
-                                </p>
-                            </form>
                         </div>
-                    </div>
-                    <div ng-show="userLogged()" class="auth-bt">
+                        <div ng-show="userLogged()" class="cart-btn">
+                            <a class="dropdown-toggle" id="navbarProfile" role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                <div class="auth-text">
+                                    <p>{{getUser()}}</p>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarProfile">
+                                <li><img src="img/cart-link.png"/><a href="#!/cart">Корзина</a></li>
+                                <li><img src="img/orders-hist.png"/><a href="#!/orders">Мои заказы</a></li>
+                                <hr>
+                                <li ng-controller="authController">
+                                    <a ng-click="logout()" href="#"><img src="img/logout.png">Выйти</a>
+                                </li>
+                            </ul>
+                        </div>
                         <a class="dropdown-toggle" id="navbarCart" role="button"
                            data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            <div class="auth-icon">
+                            <div class="cart-icon">
                                 <img src="img/cart-main.png" alt="Корзина">
-                                <div ng-show="getCartCounter() > 0" class="cartCounter">
+                                <div ng-controller="cartController" ng-show="getCartCounter() > 0" class="cartCounter">
                                     <p>{{getCartCounter()}}</p>
                                 </div>
                             </div>
@@ -190,7 +210,8 @@
                                             <td>
                                                 <button type="button" class="btn-close" aria-label="Close"
                                                         style="width: 5px;height: 5px"
-                                                        ng-click="deleteProductByCart(pc.product.id)"></button>
+                                                        ng-click="deleteProductByCart(pc.product.id)">
+                                                </button>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -208,21 +229,6 @@
                             </div>
                             <span ng-show="getCart().cartItems.length==0">В корзине пусто</span>
                         </div>
-                        <a class="dropdown-toggle" id="navbarProfile" role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            <div class="auth-text">
-                                <p>{{getUser()}}</p>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarProfile">
-                            <li><img src="img/cart-link.png"/><a href="#!/cart">Корзина</a></li>
-                            <li><img src="img/orders-hist.png"/><a href="#!/orders">Мои заказы</a></li>
-                            <hr>
-                            <li ng-controller="authController">
-                                <a ng-click="logout()" href="#"><img src="img/logout.png">Выйти</a>
-                            </li>
-                        </ul>
                     </div>
                 </li>
             </ul>
@@ -231,7 +237,7 @@
             <h1 class="header-title">Интернет-магазин "Нужные вещи"</h1>
         </div>
     </div>
-    <div ng-controller="indexController">
+    <div class="links-pane">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link" aria-current="page" href="#!/">Главная</a>

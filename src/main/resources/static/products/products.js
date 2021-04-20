@@ -1,4 +1,4 @@
-angular.module('app').controller('productsController', function ($scope, $http, $localStorage, $location) {
+angular.module('app').controller('productsController', function ($scope, $http, $localStorage) {
     const rootPath = 'http://localhost:8189/app';
     const apiPath = rootPath + '/api/v1';
 

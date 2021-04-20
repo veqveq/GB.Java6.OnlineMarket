@@ -38,7 +38,7 @@
     margin: 0;
 }
 
-.auth-bt {
+.profile {
     height: 48px;
     border-radius: 15px;
     border: 2px solid #ece8e8;
@@ -49,6 +49,15 @@
 
 .auth-icon {
     border-right: 2px solid #ece8e8;
+    height: 100%;
+    padding: 6px;
+    width: 48px;
+    display: flex;
+    justify-content: center;
+}
+
+.cart-icon {
+    border-left: 2px solid #ece8e8;
     height: 100%;
     padding: 6px;
     width: 48px;
@@ -177,7 +186,7 @@ h4 {
     width: 18px;
     height: 18px;
     background-color: red;
-    left: 30px;
+    right: 30px;
     top: 25px;
     position: absolute;
     border-radius: 9px;

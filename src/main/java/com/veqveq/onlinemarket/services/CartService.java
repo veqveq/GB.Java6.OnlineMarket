@@ -4,22 +4,68 @@ import com.veqveq.onlinemarket.exceptions.ResourceNotFoundException;
 import com.veqveq.onlinemarket.models.Cart;
 import com.veqveq.onlinemarket.models.CartItem;
 import com.veqveq.onlinemarket.models.Product;
+import com.veqveq.onlinemarket.models.User;
 import com.veqveq.onlinemarket.repositories.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CartService {
     public final CartRepository cartRepository;
+    public final UserService userService;
 
-    public UUID createCart() {
+    @Transactional
+    public UUID createCart(Principal principal, UUID cartId) {
+        User user = null;
+        Cart cart = null;
+
+        if (principal != null) user = userService.findByUsername(principal.getName()).orElse(null);
+        if (cartId != null) cart = cartRepository.findById(cartId).orElse(null);
+
+        if (user == null && cart == null) return createNewCart().getId();
+
+        if (user == null && cart != null) return cartId;
+
+        if (user != null && cart == null) {
+            Optional<Cart> currentUserCart = cartRepository.findByUserId(user.getId());
+            if (currentUserCart.isPresent()) {
+                return currentUserCart.get().getId();
+            } else {
+                return createNewCart(user).getId();
+            }
+        }
+        if (user != null && cart != null) {
+            Optional<Cart> currentUserCart = cartRepository.findByUserId(user.getId());
+            if (currentUserCart.isPresent()) {
+                if (!currentUserCart.get().getId().equals(cartId)) {
+                    cart.merge(currentUserCart.get());
+                    cartRepository.delete(currentUserCart.get());
+                    cart.setUser(user);
+                }
+                return cartId;
+            }
+            cart.setUser(user);
+        }
+        return cartId;
+    }
+
+    private Cart createNewCart() {
         Cart cart = new Cart();
         cartRepository.save(cart);
-        return cart.getId();
+        return cart;
+    }
+
+    private Cart createNewCart(User user) {
+        Cart cart = new Cart();
+        cartRepository.save(cart);
+        cart.setUser(user);
+        return cart;
     }
 
     public Cart getCart(UUID cartId) {
@@ -76,5 +122,6 @@ public class CartService {
         Cart cart = getCart(cartId);
         cart.getCartItems().forEach((ci) -> ci.setCart(null));
         cart.getCartItems().clear();
+        cart.recalculate();
     }
 }
