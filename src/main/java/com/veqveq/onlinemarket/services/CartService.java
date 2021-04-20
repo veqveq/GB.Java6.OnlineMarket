@@ -17,7 +17,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CartService {
     public final CartRepository cartRepository;
-    public final UserService userService;
 
     public Cart createNewCart() {
         Cart cart = new Cart();
