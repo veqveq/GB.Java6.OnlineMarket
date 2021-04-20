@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CartFactory {
     private final CartService cartService;
+    private User user;
+    private Cart cart;
 
-    public Cart createCart(Cart cart, User user) {
+    public Cart create() {
         CartCreator cartCreator;
         if (cart == null && user == null) {
             cartCreator = new NewCartCreator(cartService);
@@ -23,6 +25,16 @@ public class CartFactory {
             cartCreator = new MergeCartCreator(cartService, user, cart);
         }
         return cartCreator.create();
+    }
+
+    public CartFactory setUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public CartFactory setCart(Cart cart) {
+        this.cart = cart;
+        return this;
     }
 }
 

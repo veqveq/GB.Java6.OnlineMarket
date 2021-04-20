@@ -1,8 +1,6 @@
 package com.veqveq.onlinemarket.facades;
 
 import com.veqveq.onlinemarket.factories.CartFactory;
-import com.veqveq.onlinemarket.models.Cart;
-import com.veqveq.onlinemarket.models.User;
 import com.veqveq.onlinemarket.services.CartService;
 import com.veqveq.onlinemarket.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface CartFacade {
@@ -27,12 +24,10 @@ class CartFacadeService implements CartFacade {
     @Override
     @Transactional
     public UUID createCart(Principal principal, UUID cartId) {
-        User user = null;
-        Cart cart = null;
-
-        if (principal != null) user = userService.findByUsername(principal.getName()).orElse(null);
-        if (cartId != null) cart = cartService.getCartOpt(cartId).orElse(null);
-
-        return cartFactory.createCart(cart, user).getId();
+        return cartFactory
+                .setCart(cartService.getCartOpt(cartId).orElse(null))
+                .setUser(userService.findByUsername(principal.getName()).orElse(null))
+                .create()
+                .getId();
     }
 }
