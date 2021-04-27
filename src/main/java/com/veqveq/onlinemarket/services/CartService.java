@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,50 +17,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CartService {
     public final CartRepository cartRepository;
-    public final UserService userService;
 
-    @Transactional
-    public UUID createCart(Principal principal, UUID cartId) {
-        User user = null;
-        Cart cart = null;
-
-        if (principal != null) user = userService.findByUsername(principal.getName()).orElse(null);
-        if (cartId != null) cart = cartRepository.findById(cartId).orElse(null);
-
-        if (user == null && cart == null) return createNewCart().getId();
-
-        if (user == null && cart != null) return cartId;
-
-        if (user != null && cart == null) {
-            Optional<Cart> currentUserCart = cartRepository.findByUserId(user.getId());
-            if (currentUserCart.isPresent()) {
-                return currentUserCart.get().getId();
-            } else {
-                return createNewCart(user).getId();
-            }
-        }
-        if (user != null && cart != null) {
-            Optional<Cart> currentUserCart = cartRepository.findByUserId(user.getId());
-            if (currentUserCart.isPresent()) {
-                if (!currentUserCart.get().getId().equals(cartId)) {
-                    cart.merge(currentUserCart.get());
-                    cartRepository.delete(currentUserCart.get());
-                    cart.setUser(user);
-                }
-                return cartId;
-            }
-            cart.setUser(user);
-        }
-        return cartId;
-    }
-
-    private Cart createNewCart() {
+    public Cart createNewCart() {
         Cart cart = new Cart();
         cartRepository.save(cart);
         return cart;
     }
 
-    private Cart createNewCart(User user) {
+    public Cart createNewCart(User user) {
         Cart cart = new Cart();
         cartRepository.save(cart);
         cart.setUser(user);
@@ -69,8 +32,22 @@ public class CartService {
     }
 
     public Cart getCart(UUID cartId) {
-        return cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart by id :" + cartId + " not found"));
+        return getCartOpt(cartId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Cart by id :" + cartId + " not found")
+                );
+    }
+
+    public Optional<Cart> getCartOpt(UUID cartId){
+        return cartRepository.findById(cartId);
+    }
+
+    public Optional<Cart> getUserCart(User user){
+        return cartRepository.findByUserId(user.getId());
+    }
+
+    public void deleteCart(Cart cart){
+        cartRepository.delete(cart);
     }
 
     @Transactional
